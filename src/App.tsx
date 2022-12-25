@@ -7,7 +7,7 @@ export const App = defineComponent({
 
     return () => (
 
-      <div>
+      <div class="page">
         <RouterView />
       </div>
     )
