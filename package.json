@@ -8,8 +8,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "sass": "1.49.11",
     "vue": "3.2.31",
-    "vue-router": "4"
+    "vue-router": "4.0.14"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "2.3.1",
