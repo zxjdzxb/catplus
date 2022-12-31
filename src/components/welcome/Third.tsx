@@ -1,5 +1,4 @@
 import s from './welcome.module.scss';
-import chart from '../../assets/icons/chart.svg';
 export const Third = () => {
   return (
     <div class={s.card}>

@@ -1,5 +1,4 @@
 import s from './welcome.module.scss';
-import pig from '../../assets/icons/pig.svg';
 import { FunctionalComponent } from 'vue';
 export const First: FunctionalComponent = () => {
   return <div class={s.card}>
