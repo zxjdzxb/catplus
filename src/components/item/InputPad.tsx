@@ -2,7 +2,7 @@ import {defineComponent, PropType, ref} from 'vue';
 import {Icon} from '../../shared/Icon';
 import s from './InputPad.module.scss';
 import {time} from '../../shared/time';
-import {DatetimePicker,Popup} from 'vant';
+import {DatetimePicker, NumberKeyboard,Popup} from 'vant';
 
 export const InputPad = defineComponent({
   props: {
@@ -11,30 +11,31 @@ export const InputPad = defineComponent({
     }
   },
   setup: (props, context) => {
-    const buttons = [
-      {text: '1', onClick: () => { }},
-      {text: '2', onClick: () => { }},
-      {text: '3', onClick: () => { }},
-      {text: '清空', onClick: () => { }},
-      {text: '4', onClick: () => { }},
-      {text: '5', onClick: () => { }},
-      {text: '6', onClick: () => { }},
-      {text: '+', onClick: () => { }},
-      {text: '7', onClick: () => { }},
-      {text: '8', onClick: () => { }},
-      {text: '9', onClick: () => { }},
-      {text: '-', onClick: () => { }},
-      {text: '.', onClick: () => { }},
-      {text: '0', onClick: () => { }},
-      {text: '删', onClick: () => { }},
-      {text: '提交', onClick: () => { }},
-    ];
     const now = new Date();
     let refDate = ref<Date>(now);
     const refDatePickerVisible = ref(false)
+    const refAmount = ref('')
+    const buttons = [
+      {
+        text: '1', onClick: () => { appendText(1) }
+      },
+      { text: '2', onClick: () => { appendText(2) } },
+      { text: '3', onClick: () => { appendText(3) } },
+      { text: '4', onClick: () => { appendText(4) } },
+      { text: '5', onClick: () => { appendText(5) } },
+      { text: '6', onClick: () => { appendText(6) } },
+      { text: '7', onClick: () => { appendText(7) } },
+      { text: '8', onClick: () => { appendText(8) } },
+      { text: '9', onClick: () => { appendText(9) } },
+      { text: '.', onClick: () => { appendText('.') } },
+      { text: '0', onClick: () => { appendText(0) } },
+      { text: '清空', onClick: () => { } },
+      { text: '提交', onClick: () => { } },
+    ];
     const showDatePicker = () => refDatePickerVisible.value = true
     const hideDatePicker = () => refDatePickerVisible.value = false
     const setDate = (date: Date) => { refDate.value = date; hideDatePicker() }
+    const appendText = (n: number | string) => refAmount.value += n.toString()
     return () => <>
       <div class={s.dateAndAmount}>
         <span class={s.date}>
@@ -49,7 +50,7 @@ export const InputPad = defineComponent({
 
           </span>
       </span>
-        <span class={s.amount}>199.12</span>
+        <span class={s.amount}>{refAmount.value}</span>
 
       </div>
       <div class={s.buttons}>

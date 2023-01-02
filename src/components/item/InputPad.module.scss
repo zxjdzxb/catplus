@@ -1,47 +1,62 @@
 
-.dateAndAmount{
+.dateAndAmount {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 16px;
   font-family: monospace;
   border-top: 1px solid var(--button-border-color);
-  >.date{
+
+  > .date {
     font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: start;
     color: var(--date-text);
-    .icon{
+
+    .icon {
       width: 24px;
       height: 24px;
       margin-right: 8px;
     }
   }
-  >.amount{
+
+  > .amount {
     font-size: 20px;
     color: var(--amount-text);
   }
 }
+
 .buttons {
   display: flex;
   flex-wrap: wrap;
   border-top: 1px solid var(--button-border-color);
+
   > button {
     border: none;
     border-right: 1px solid var(--button-border-color);
     border-bottom: 1px solid var(--button-border-color);
-    width: 25%;
+    width: 33.3333%;
     height: 48px;
     background: transparent;
-    &:nth-child(4n){
+
+    &:nth-child(3n) {
       border-right: none;
     }
-    &:nth-child(13),
-    &:nth-child(14),
-    &:nth-child(15),
-    &:nth-child(16){
+
+    &:nth-child(12){
+      border-right: 1px solid var(--button-border-color);
+    }
+    &:nth-child(13){
+      border-right: none;
+    }
+    &:nth-child(10),
+    &:nth-child(11),
+    &:nth-child(12),
+    &:nth-child(13) {
+      width: 25%;
       border-bottom: none;
     }
   }
+
 }
