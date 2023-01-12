@@ -1,5 +1,7 @@
-import { defineComponent, PropType } from 'vue';
-import { Navbar } from '../shared/Navbar';
+import {defineComponent, PropType} from 'vue';
+import {Navbar} from '../shared/Navbar';
+import s from './MainLayout.module.scss';
+
 export const MainLayout = defineComponent({
   setup: (props, context) => {
     return () => (
@@ -12,6 +14,6 @@ export const MainLayout = defineComponent({
         }</Navbar>
         {context.slots.default?.()}
       </div>
-    )
+    );
   }
-})
+});
