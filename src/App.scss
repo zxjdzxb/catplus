@@ -11,3 +11,12 @@ body {
   visibility: hidden;
   display: none;
 }
+
+.customTabs_tabs_nav {
+  justify-content: flex-start;
+
+  & > &_item {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
