@@ -7,6 +7,7 @@ import {Time} from '../../shared/time';
 import {ItemSummary} from './ItemSummary';
 import {Overlay} from 'vant';
 import {Form, FormItem} from '../../shared/Form';
+import {Button} from '../../shared/Button';
 export const ItemList = defineComponent({
   setup: (props, context) => {
     const refSelected = ref('本月')
@@ -35,6 +36,10 @@ export const ItemList = defineComponent({
       }
     })
     const refOverlayVisible = ref(false)
+    const onSubmitCustomTime = (e: Event) => {
+      e.preventDefault()
+      refOverlayVisible.value = false
+    }
     return () => (
       <MainLayout>{
         {
@@ -69,8 +74,15 @@ export const ItemList = defineComponent({
                   请选择时间
                 </header>
                 <main>
-                  <Form>
+                  <Form onSubmit={onSubmitCustomTime}>
                     <FormItem label='开始时间' v-model={customTime.start} type='date' />
+                    <FormItem label='结束时间' v-model={customTime.end} type='date' />
+                    <FormItem>
+                      <div class={s.actions}>
+                        <button type="button">取消</button>
+                        <button type="submit">确认</button>
+                      </div>
+                    </FormItem>
                   </Form>
                 </main>
               </div>
