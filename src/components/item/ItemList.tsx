@@ -5,9 +5,10 @@ import {Icon} from '../../shared/Icon';
 import {MainLayout} from '../../layouts/MainLayout';
 import {Time} from '../../shared/time';
 import {ItemSummary} from './ItemSummary';
-import {Overlay} from 'vant';
+import { OverlayIcon } from '../../shared/Overlay';
 import {Form, FormItem} from '../../shared/Form';
 import {Button} from '../../shared/Button';
+import {Overlay} from 'vant';
 export const ItemList = defineComponent({
   setup: (props, context) => {
     const refSelected = ref('本月')
@@ -44,7 +45,7 @@ export const ItemList = defineComponent({
       <MainLayout>{
         {
           title: () => '山竹记账',
-          icon: () => <Icon name="menu" />,
+          icon: () => <OverlayIcon />,
           default: () => <>
             <Tabs classPrefix={'customTabs'} v-model:selected={refSelected.value}
                   onUpdate:selected={onSelect}>
