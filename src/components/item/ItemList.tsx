@@ -70,7 +70,7 @@ export const ItemList = defineComponent({
                   endDate={customTime.end} />
               </Tab>
             </Tabs>
-            <Overlay show={refOverlayVisible.value} class={s.overlay} >
+            <Overlay get-container="body" show={refOverlayVisible.value} class={s.overlay} >
               <div class={s.overlay_inner}>
                 <header>
                   请选择时间
