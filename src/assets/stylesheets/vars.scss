@@ -1,4 +1,4 @@
-:root {
+:root{
   --amount-text: #53a867;
   --bg: white;
   --button-bg-danger: #E10505;
@@ -51,6 +51,8 @@
   --z-index-bottom-nav: 8;
   --z-index-navbar: 32;
   --z-index-overlay: 16;
-  --van-overlay-z-index: 64;
   --app-name-text: #7878FF;
+}
+body {
+  --van-overlay-z-index: 64;
 }
