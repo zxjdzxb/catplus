@@ -7,6 +7,10 @@
   height: var(--button-height);
   &.normal {
   }
+  &[disabled]{
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
   &.important {
     background: var(--button-bg);
   }
