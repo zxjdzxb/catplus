@@ -18,7 +18,12 @@ export default defineConfig({
       resolves: [VantResolve()],
     }),
   ],
-  server: {				// ← ← ← ← ← ←
-    host: '0.0.0.0'	// ← 新增内容 ←
+  server: {
+    host: '0.0.0.0',// ← 新增内容 ←
+    proxy: {
+      '/api/v1': {
+        target: 'http://121.196.236.94:8080/',
+      }
+    }
   }
 })
