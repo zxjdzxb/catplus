@@ -6,10 +6,12 @@ import {Icon} from '../shared/Icon';
 import {validate} from '../shared/validate';
 import s from './SignInPage.module.scss';
 import {http} from '../shared/Http';
+import {useBool} from '../hooks/useBool';
 
 export const SignInPage = defineComponent({
   setup: (props, context) => {
     const refValidationCode = ref<any>()
+    const { ref: refDisabled, toggle, on: disabled, off: enable } = useBool(false)
     const formData = reactive({
       email: '1660154581@qq.com',
       code: ''
@@ -37,9 +39,11 @@ export const SignInPage = defineComponent({
       throw error
     }
     const onClickSendValidationCode = async () => {
+      disabled()
       const response = await http
         .post('/validation_codes', { email: formData.email })
         .catch(onError)
+      .finally(enable)
       // 成功
       refValidationCode.value.startCount()
     }
@@ -62,6 +66,7 @@ export const SignInPage = defineComponent({
                           ref={refValidationCode}
                           placeholder='请输入六位数字'
                           countFrom={2}
+                          disabled={refDisabled.value}
                           onClick={onClickSendValidationCode}
                           v-model={formData.code} error={errors.code?.[0]} />
                 <FormItem style={{ paddingTop: '96px' }}>
