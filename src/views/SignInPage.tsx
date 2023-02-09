@@ -7,7 +7,7 @@ import {hasError, validate} from '../shared/validate';
 import s from './SignInPage.module.scss';
 import {http} from '../shared/Http';
 import {useBool} from '../hooks/useBool';
-
+import { history } from '../shared/history';
 export const SignInPage = defineComponent({
   setup: (props, context) => {
     const refValidationCode = ref<any>()
@@ -21,7 +21,6 @@ export const SignInPage = defineComponent({
       code: []
     })
     const onSubmit = async (e: Event) => {
-      console.log('submit')
       e.preventDefault()
       Object.assign(errors, {
         email: [], code: []
@@ -31,8 +30,10 @@ export const SignInPage = defineComponent({
         { key: 'email', type: 'pattern', regex: /.+@.+/, message: '必须是邮箱地址' },
         { key: 'code', type: 'required', message: '必填' },
       ]))
-      if(!hasError(errors)){
-        const response = await http.post('/session', formData)
+      if (!hasError(errors)) {
+        const response = await http.post<{ jwt: string }>('/session', formData)
+        localStorage.setItem('jwt', response.data.jwt)
+        history.push('/')
       }
     }
     const onError = (error: any) => {
@@ -42,6 +43,14 @@ export const SignInPage = defineComponent({
       throw error
     }
     const onClickSendValidationCode = async () => {
+      Object.assign(errors, {
+        email: [], code: []
+      })
+      Object.assign(errors, validate(formData, [
+        { key: 'email', type: 'required', message: '必填' },
+        { key: 'email', type: 'pattern', regex: /.+@.+/, message: '必须是邮箱地址' },
+        { key: 'code', type: 'required', message: '必填' },
+      ]))
       disabled()
       const response = await http
         .post('/validation_codes', { email: formData.email })
