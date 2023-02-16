@@ -9,6 +9,7 @@ import {http} from '../shared/Http';
 import {useBool} from '../hooks/useBool';
 import { history } from '../shared/history';
 import {useRoute, useRouter} from 'vue-router';
+import {refreshMe} from '../shared/me';
 export const SignInPage = defineComponent({
   setup: (props, context) => {
     const refValidationCode = ref<any>()
@@ -38,6 +39,7 @@ export const SignInPage = defineComponent({
         localStorage.setItem('jwt', response.data.jwt)
         // router.push('/sign_in?return_to='+ encodeURIComponent(route.fullPath))
         const returnTo = route.query.return_to?.toString()
+        refreshMe()
         router.push(returnTo || '/')
       }
     }

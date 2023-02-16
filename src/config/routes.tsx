@@ -25,7 +25,7 @@ export const routes: RouteRecordRaw[] = [
     path: '/welcome',
     component: Welcome,
     beforeEnter: (to, from, next) => {
-      localStorage.getItem('skipFeatures') === 'yes' ? next('/start') : next()
+      localStorage.getItem('skipFeatures') === 'yes' ? next('/start') : next();
     },
     children: [
       {path: '', redirect: '/welcome/1',},
@@ -38,12 +38,6 @@ export const routes: RouteRecordRaw[] = [
   {path: '/start', component: StartPage},
   {
     path: '/items', component: ItemPage,
-    beforeEnter: async (to, from, next) => {
-      await http.get('/me').catch(() => {
-        next('/sign_in?return_to=' + to.path)
-      })
-      next()
-    },
     children: [
       {path: '', component: ItemList},
       {path: 'create', component: ItemCreate},
