@@ -8,10 +8,13 @@ import s from './SignInPage.module.scss';
 import {http} from '../shared/Http';
 import {useBool} from '../hooks/useBool';
 import { history } from '../shared/history';
+import {useRoute, useRouter} from 'vue-router';
 export const SignInPage = defineComponent({
   setup: (props, context) => {
     const refValidationCode = ref<any>()
     const { ref: refDisabled, toggle, on: disabled, off: enable } = useBool(false)
+    const router = useRouter()
+    const route = useRoute()
     const formData = reactive({
       email: '1660154581@qq.com',
       code: ''
@@ -33,7 +36,9 @@ export const SignInPage = defineComponent({
       if (!hasError(errors)) {
         const response = await http.post<{ jwt: string }>('/session', formData)
         localStorage.setItem('jwt', response.data.jwt)
-        history.push('/')
+        // router.push('/sign_in?return_to='+ encodeURIComponent(route.fullPath))
+        const returnTo = route.query.return_to?.toString()
+        router.push(returnTo || '/')
       }
     }
     const onError = (error: any) => {
@@ -70,7 +75,7 @@ export const SignInPage = defineComponent({
                 <Icon class={s.icon} name="mangosteen" />
                 <h1 class={s.appName}>山竹记账</h1>
               </div>
-              <div>{JSON.stringify(formData)}</div>
+              {/*<div>{JSON.stringify(formData)}</div>*/}
               <Form onSubmit={onSubmit}>
                 <FormItem label="邮箱地址" type="text"
                           placeholder='请输入邮箱，然后点击发送验证码'
