@@ -40,3 +40,7 @@ type Item = {
   happen_at: string
   kind: expenses | income
 }
+type User = {
+  id: number;
+  email: string;
+}
