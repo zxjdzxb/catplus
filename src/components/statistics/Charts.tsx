@@ -50,7 +50,6 @@ export const Charts = defineComponent({
         <PieChart />
         <Bars />
       </div>
-
     )
   }
 })
