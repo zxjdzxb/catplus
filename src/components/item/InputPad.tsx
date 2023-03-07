@@ -80,6 +80,7 @@ export const InputPad = defineComponent({
             <Popup position="bottom" v-model:show={refDatePickerVisible.value}>
                <DatetimePicker value={props.happenAt} type="date" title="选择年月日"
                                onConfirm={setDate} onCancel={hideDatePicker}
+                               min-date={new Date(2020, 0, 1)}
                />
             </Popup>
 
