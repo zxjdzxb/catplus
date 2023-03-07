@@ -12,9 +12,17 @@ export const Navbar = defineComponent({
     const {slots} = context;
     const ok = ref(false);
     onMounted(() => {
-      window.document.documentElement.setAttribute('data-theme', 'light');
+      //根据时间判断是否为夜间模式
+      const hour = new Date().getHours();
+      if (hour >= 20 || hour <= 6) {
+        window.document.documentElement.setAttribute('data-theme', 'dark');
+        ok.value = true;
+      }else {
+        window.document.documentElement.setAttribute('data-theme', 'light');
+        ok.value = false;
+      }
     });
-    const onClick = () => {
+    const themeSwitch = () => {
       const currentTheme = window.document.documentElement.getAttribute('data-theme');
       ok.value = !ok.value;
       if (currentTheme === 'dark') {
@@ -32,7 +40,7 @@ export const Navbar = defineComponent({
         <span class={s.title_wrapper}>
           {slots.default?.()}
         </span>
-        <span onClick={onClick} class={s.status}>
+        <span onClick={themeSwitch} class={s.status}>
          {!ok.value ? <Icon name="daytime" class={s.icon_wrapper}/> : <Icon name="night" class={s.icon_wrapper}/>}
         </span>
       </div>
