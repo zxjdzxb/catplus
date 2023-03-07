@@ -1,5 +1,7 @@
-import {defineComponent, onMounted, PropType} from 'vue';
+import {defineComponent, onMounted, PropType, ref} from 'vue';
 import s from './Navbar.module.scss';
+import {Icon} from './Icon';
+
 export const Navbar = defineComponent({
   props: {
     name: {
@@ -7,12 +9,21 @@ export const Navbar = defineComponent({
     }
   },
   setup: (props, context) => {
-    const {slots} = context
-
+    const {slots} = context;
+    const ok = ref(false);
+    onMounted(() => {
+      window.document.documentElement.setAttribute('data-theme', 'light');
+    });
     const onClick = () => {
-      const button_bg = getComputedStyle(document.documentElement).getPropertyValue(`--button-bg`);
-      document.documentElement.style.setProperty(`--button-bg`, button_bg === 'red' ? '#5c33be' : 'red');
-    }
+      const currentTheme = window.document.documentElement.getAttribute('data-theme');
+      ok.value = !ok.value;
+      if (currentTheme === 'dark') {
+        window.document.documentElement.setAttribute('data-theme', 'light');
+      } else {
+        window.document.documentElement.setAttribute('data-theme', 'dark');
+      }
+
+    };
     return () => (
       <div class={s.navbar}>
         <span class={s.icon_wrapper}>
@@ -21,8 +32,10 @@ export const Navbar = defineComponent({
         <span class={s.title_wrapper}>
           {slots.default?.()}
         </span>
-        <button onClick={onClick}>切换</button>
+        <span onClick={onClick} class={s.status}>
+         {!ok.value ? <Icon name="daytime" class={s.icon_wrapper}/> : <Icon name="night" class={s.icon_wrapper}/>}
+        </span>
       </div>
-    )
+    );
   }
-})
+});
