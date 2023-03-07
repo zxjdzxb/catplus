@@ -1,4 +1,4 @@
-import { defineComponent, PropType } from 'vue';
+import {defineComponent, onMounted, PropType} from 'vue';
 import s from './Navbar.module.scss';
 export const Navbar = defineComponent({
   props: {
@@ -8,6 +8,11 @@ export const Navbar = defineComponent({
   },
   setup: (props, context) => {
     const {slots} = context
+
+    const onClick = () => {
+      const button_bg = getComputedStyle(document.documentElement).getPropertyValue(`--button-bg`);
+      document.documentElement.style.setProperty(`--button-bg`, button_bg === 'red' ? '#5c33be' : 'red');
+    }
     return () => (
       <div class={s.navbar}>
         <span class={s.icon_wrapper}>
@@ -16,6 +21,7 @@ export const Navbar = defineComponent({
         <span class={s.title_wrapper}>
           {slots.default?.()}
         </span>
+        <button onClick={onClick}>切换</button>
       </div>
     )
   }
