@@ -36,7 +36,7 @@ export const SignInPage = defineComponent({
         { key: 'code', type: 'required', message: '必填' },
       ]))
       if (!hasError(errors)) {
-        const response = await http.post<{ jwt: string }>('/session', formData)
+        const response = await http.post<{ jwt: string }>('/session', formData, {_autoLoading: true})
           .catch(onError)
         console.log(response)
         localStorage.setItem('jwt', response.data.jwt)
@@ -65,7 +65,6 @@ export const SignInPage = defineComponent({
       disabled()
       await http
         .post('/validation_codes', { email: formData.email } , {
-          _autoLoading: true
         })
         .catch(onError)
       .finally(enable)

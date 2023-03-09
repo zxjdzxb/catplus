@@ -35,29 +35,29 @@ export const ItemCreate = defineComponent({
     };
     const onSubmit = async () => {
       await http
-        .post<Resource<Item>>('/items', formData, { _mock: 'itemCreate' })
+        .post<Resource<Item>>('/items', formData, {_mock: 'itemCreate', _autoLoading: true})
         .catch(onError);
       router.push('/items');
     };
     return () => (
       <MainLayout class={s.layout}>{{
         title: () => '记一笔',
-        icon: () =>  <BackIcon />,
+        icon: () => <BackIcon/>,
         default: () => <>
           <div class={s.wrapper}>
             <Tabs v-model:selected={formData.kind} class={s.tabs}>
               <Tab name="支出">
-                <Tags kind="expenses" v-model:selected={formData.tags_id[0]} />
+                <Tags kind="expenses" v-model:selected={formData.tags_id[0]}/>
               </Tab>
               <Tab name="收入">
-                <Tags kind="income" v-model:selected={formData.tags_id[0]} />
+                <Tags kind="income" v-model:selected={formData.tags_id[0]}/>
               </Tab>
             </Tabs>
             <div class={s.inputPad_wrapper}>
               <InputPad
                 v-model:happenAt={formData.happen_at}
                 v-model:amount={formData.amount}
-                onSubmit={onSubmit} />
+                onSubmit={onSubmit}/>
             </div>
           </div>
         </>
