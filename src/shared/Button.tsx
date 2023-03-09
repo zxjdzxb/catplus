@@ -38,9 +38,8 @@ export const Button = defineComponent({
         return props.disabled
       }
     })
-    const onClick = () => {
-      //@ts-ignore
-      props.onClick?.()
+    const onClick = (e: MouseEvent) => {
+      props.onClick?.(e)
       selfDisabled.value = true
       setTimeout(()=>{
         selfDisabled.value = false
