@@ -1,4 +1,5 @@
-import {defineComponent, onMounted, PropType, ref} from 'vue';
+
+import {defineComponent, PropType, ref} from 'vue';
 import s from './Navbar.module.scss';
 import {Icon} from './Icon';
 
