@@ -9,6 +9,7 @@ import {Dialog} from 'vant';
 import {AxiosError} from 'axios';
 import {http} from '../../shared/Http';
 import {BackIcon} from '../../shared/BackIcon';
+import {hasError, validate} from '../../shared/validate';
 
 export const ItemCreate = defineComponent({
   props: {
