@@ -105,4 +105,5 @@ export class Time {
     }
     return new Time(date)
   }
+
 }
