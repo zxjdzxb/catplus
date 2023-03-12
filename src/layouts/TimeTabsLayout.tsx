@@ -1,4 +1,4 @@
-import {Dialog, Overlay} from 'vant';
+import {Dialog, Overlay, Toast} from 'vant';
 import {Component, computed, DefineComponent, defineComponent, PropType, reactive, ref} from 'vue';
 import {ItemSummary} from '../components/item/ItemSummary';
 import {Form, FormItem} from '../shared/Form';
@@ -50,10 +50,7 @@ export const TimeTabsLayout = defineComponent({
       let small = start.replace(/-/g, '/');
       let big = end.replace(/-/g, '/');
       if (small > big) {
-        Dialog({
-          title: '问题',
-          message: '开始时间不能大于结束时间',
-        });
+        Toast({ message: '开始时间不能大于结束时间',icon: 'warning'});
         return false;
       }
       return true;

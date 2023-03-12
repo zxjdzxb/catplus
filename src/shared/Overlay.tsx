@@ -62,7 +62,10 @@ export const Overlay = defineComponent({
     })
     const onIndexRepeat = (index: number, text: string)=> {
       if (index === refSelected.value) {
-        Toast(`当前已是${text}`)
+        Toast({
+          message: `当前已是${text}`,
+          icon: 'success',
+        })
       }
     }
     return () => (
