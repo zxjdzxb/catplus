@@ -27,6 +27,8 @@ export const useItemStore = (id: string | (string | undefined)[]) =>
           '/items',
           {
             happen_after: startDate,
+
+
             happen_before: endDate,
             page: firstPage ? 1 : this.page + 1
           },

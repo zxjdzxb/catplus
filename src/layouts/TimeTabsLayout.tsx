@@ -37,13 +37,13 @@ export const TimeTabsLayout = defineComponent({
     const time = new Time();
     const tempTime = reactive({
       start: new Time().format(),
-      end: new Time().format()
+      end: new Time().add(1, 'day').format()
     });
     const customTime = reactive<{
       start?: string
       end?: string
     }>({});
-//校验tempTime时间
+    //校验tempTime时间
     const validateTime = computed(() => {
       const start = tempTime.start;
       const end = tempTime.end;
