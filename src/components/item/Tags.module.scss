@@ -7,6 +7,14 @@
   flex-wrap: wrap;
   padding-top: 16px;
 }
+.tags_wrapper{
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
 .tag {
   position: relative;
   width: 20vw;
