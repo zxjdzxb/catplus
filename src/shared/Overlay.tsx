@@ -1,4 +1,4 @@
-import { Dialog } from 'vant'
+import {Dialog, Toast} from 'vant';
 import {computed, defineComponent, onMounted, PropType, ref} from 'vue';
 import { RouterLink, useRoute } from 'vue-router'
 import { useMeStore } from '../stores/useMeStore'
@@ -31,13 +31,40 @@ export const Overlay = defineComponent({
       localStorage.removeItem('jwt')
       window.location.reload()
     }
-    const linkArray =ref([
+    const linkArray = ref([
       { to: '/items', iconName: 'mangosteen', text: '回到首页' },
       { to: '/items/create', iconName: 'pig', text: '记一笔账' },
       { to: '/statistics', iconName: 'charts', text: '统计图表' },
       { to: '/export', iconName: 'export', text: '导出数据' },
       { to: '/notify', iconName: 'notify', text: '记账提醒' },
     ])
+
+    const refSelected = ref<number>(0)
+    onMounted(() => {
+      const path = route.path
+      switch (path) {
+        case '/items':
+          refSelected.value = 0
+          break
+        case '/items/create':
+          refSelected.value = 1
+          break
+        case '/statistics':
+          refSelected.value = 2
+          break
+        case '/export':
+          refSelected.value = 3
+          break
+        case '/notify':
+          refSelected.value = 4
+          break
+      }
+    })
+    const onIndexRepeat = (index: number, text: string)=> {
+      if (index === refSelected.value) {
+        Toast(`当前已是${text}`)
+      }
+    }
     return () => (
       <>
         <div class={s.mask} onClick={close}></div>
@@ -56,18 +83,15 @@ export const Overlay = defineComponent({
             )}
           </section>
           <nav>
-            <ul class={s.action_list}>
-
               <ul class={s.action_list}>
-                {linkArray.value.map((item, index) => (
-                  <li>
+                {linkArray.value.map((item, i) => (
+                  <li onClick={() => onIndexRepeat(i,item.text)}>
                     <RouterLink to={item.to} class={s.action}>
-                      <Icon name={item.iconName} class={s.icon} />
+                      <Icon name={item.iconName} class={s.icon}/>
                       <span>{item.text}</span>
                     </RouterLink>
                   </li>
                 ))}
-              </ul>
             </ul>
           </nav>
         </div>
