@@ -1,21 +1,22 @@
-import {defineComponent, onMounted, PropType, ref} from 'vue';
-import {Icon} from './Icon';
-import s from './Overlay.module.scss';
-import {RouterLink, useRoute} from 'vue-router';
-import {Dialog} from 'vant';
-import {useMeStore} from '../stores/useMeStore';
+import { Dialog } from 'vant'
+import {computed, defineComponent, onMounted, PropType, ref} from 'vue';
+import { RouterLink, useRoute } from 'vue-router'
+import { useMeStore } from '../stores/useMeStore'
+import { Icon } from './Icon'
+import s from './Overlay.module.scss'
+import component from '*.vue';
 
 export const Overlay = defineComponent({
   props: {
     onClose: {
-      type: Function as PropType<() => void>
-    }
+      type: Function as PropType<() => void>,
+    },
   },
-  setup: (props, context) => {
+  setup: (props) => {
     const meStore = useMeStore()
     const close = () => {
-      props.onClose?.();
-    };
+      props.onClose?.()
+    }
     const route = useRoute()
     const me = ref<User>()
     onMounted(async () => {
@@ -28,9 +29,15 @@ export const Overlay = defineComponent({
         message: '你真的要退出登录吗？',
       })
       localStorage.removeItem('jwt')
-      //刷新页面
-      location.reload()
+      window.location.reload()
     }
+    const linkArray =ref([
+      { to: '/items', iconName: 'mangosteen', text: '回到首页' },
+      { to: '/items/create', iconName: 'pig', text: '记一笔账' },
+      { to: '/statistics', iconName: 'charts', text: '统计图表' },
+      { to: '/export', iconName: 'export', text: '导出数据' },
+      { to: '/notify', iconName: 'notify', text: '记账提醒' },
+    ])
     return () => (
       <>
         <div class={s.mask} onClick={close}></div>
@@ -50,49 +57,38 @@ export const Overlay = defineComponent({
           </section>
           <nav>
             <ul class={s.action_list}>
-              <li>
-                <RouterLink to="/items" class={s.action}>
-                  <Icon name="pig" class={s.icon} />
-                  <span>记账列表</span>
-                </RouterLink>
-              </li>
-              <li>
-                <RouterLink to="/statistics" class={s.action}>
-                  <Icon name="charts" class={s.icon} />
-                  <span>统计图表</span>
-                </RouterLink>
-              </li>
-              <li>
-                <RouterLink to="/export" class={s.action}>
-                  <Icon name="export" class={s.icon} />
-                  <span>导出数据</span>
-                </RouterLink>
-              </li>
-              <li>
-                <RouterLink to="/notify" class={s.action}>
-                  <Icon name="notify" class={s.icon} />
-                  <span>记账提醒</span>
-                </RouterLink>
-              </li>
+
+              <ul class={s.action_list}>
+                {linkArray.value.map((item, index) => (
+                  <li>
+                    <RouterLink to={item.to} class={s.action}>
+                      <Icon name={item.iconName} class={s.icon} />
+                      <span>{item.text}</span>
+                    </RouterLink>
+                  </li>
+                ))}
+              </ul>
             </ul>
           </nav>
         </div>
       </>
     )
   },
-});
-export const OverlayIcon = defineComponent({
-  setup: (props, context) => {
-    const refOverlayVisible = ref(false);
-    const onClickMenu = () => {
-      refOverlayVisible.value = !refOverlayVisible.value;
-    };
-    return () => <>
-      <Icon name="menu" class={s.icon} onClick={onClickMenu}/>
-      {refOverlayVisible.value &&
-        <Overlay onClose={() => refOverlayVisible.value = false}/>
-      }
-    </>;
+})
 
-  }
-});
+export const OverlayIcon = defineComponent({
+  setup: () => {
+    const refOverlayVisible = ref(false)
+    const onClickMenu = () => {
+      refOverlayVisible.value = !refOverlayVisible.value
+    }
+    return () => (
+      <>
+        <Icon name="menu" class={s.icon} onClick={onClickMenu} />
+        {refOverlayVisible.value && (
+          <Overlay onClose={() => (refOverlayVisible.value = false)} />
+        )}
+      </>
+    )
+  },
+})
