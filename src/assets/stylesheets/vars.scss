@@ -1,6 +1,7 @@
 :root[data-theme="light"]{
   --amount-text: #53a867;
   --bg: white;
+  --header-color:#F0EB8D;
   --button-bg-danger: #E10505;
   --button-bg:#E7B10A;
   --button-border-color: #ddd;
@@ -60,6 +61,7 @@ body {
 }
 //黑夜模式
 :root[data-theme="dark"]{
+  --header-color:#D4D4EE;
   --amount-text: #53a867;
   --bg: white;
   --button-bg-danger: #E10505;
