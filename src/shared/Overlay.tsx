@@ -32,7 +32,7 @@ export const Overlay = defineComponent({
       window.location.reload()
     }
     const linkArray = ref([
-      { to: '/items', iconName: 'mangosteen', text: '回到首页' },
+      { to: '/items', iconName: 'mangosteen', text: '欢迎使用' },
       { to: '/items/create', iconName: 'pig', text: '记一笔账' },
       { to: '/statistics', iconName: 'charts', text: '统计图表' },
       { to: '/export', iconName: 'export', text: '导出数据' },

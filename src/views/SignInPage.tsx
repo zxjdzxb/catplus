@@ -51,7 +51,6 @@ export const SignInPage = defineComponent({
       throw error
     }
     const onClickSendValidationCode = async () => {
-
       disabled()
       await http
         .post('/validation_codes', { email: formData.email } , {
