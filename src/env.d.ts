@@ -8,6 +8,7 @@ declare module '*.vue' {
 }
 
 type JSONValue = null | boolean | string | number | JSONValue[] | Record<string, JSONValue>
+declare var DEBUG: boolean
 
 type Tag = {
   id: number,
