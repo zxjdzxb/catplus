@@ -6,6 +6,26 @@ import styleImport, { VantResolve } from 'vite-plugin-style-import';
 // https://vitejs.dev/config/
 export default defineConfig({
   // base:'/catplus/dist/',
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id: any) {
+          if (id.includes('echarts')) {
+            return 'echarts';
+          }
+          if (id.includes('mock') || id.includes('faker')) {
+            return 'mock';
+          }
+          if (id.includes('vant')) {
+            return 'vant';
+          }
+          if (id.includes('node_modules')) {
+            return 'vendor';
+          }
+        }
+      }
+    }
+  },
   plugins: [
     vue(),
     vueJsx({
