@@ -4,3 +4,5 @@
 pnpm run dev
 # build 
 pnpm run build
+# oss
+bin/ossutil cp -r dist oss://catplus
