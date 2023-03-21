@@ -12,7 +12,7 @@ export default defineConfig(({command}) => {
     define: command === 'build' ? {
       DEBUG: false
     } : {
-      DEBUG: true
+      DEBUG: true //如果想测试接口改成false
     },
     build: {
       rollupOptions: {
