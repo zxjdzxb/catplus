@@ -15,7 +15,7 @@ export const routes: RouteRecordRaw[] = [
   {path: '/', redirect: '/welcome'},
   {
     path: '/welcome',
-    component: ()=> import('../views/Welcome'),
+    component: () => import('../views/Welcome'),
     beforeEnter: (to, from, next) => {
       localStorage.getItem('skipFeatures') === 'yes' ? next('/items') : next();
     },
@@ -28,27 +28,29 @@ export const routes: RouteRecordRaw[] = [
     ]
   },
   {
-    path: '/items', component: ()=> import('../views/ItemPage'),
+    path: '/items', component: () => import('../views/ItemPage'),
     children: [
       {path: '', component: ItemList},
       {path: 'create', component: ItemCreate},
     ]
   },
   {
-    path: '/tags', component: ()=> import('../views/TagPage'),
+    path: '/tags', component: () => import('../views/TagPage'),
     children: [
-      { path: 'create', component: ()=> import('../components/tag/TagCreate') },
-      { path: ':id/edit', component: ()=> import('../components/tag/TagEdit') }
+      {path: 'create', component: () => import('../components/tag/TagCreate')},
+      {path: ':id/edit', component: () => import('../components/tag/TagEdit')}
     ]
   },
   {
-    path: '/sign_in', component: ()=> import('../views/SignInPage')
+    path: '/sign_in', component: () => import('../views/SignInPage')
   },
   {
-    path: '/statistics', component: ()=> import('../views/StatisticsPage')
-  },{
-    path: '/export', component: ()=> import('../shared/ComingSoon')
-  },{
-    path: '/notify', component: ()=> import('../shared/ComingSoon')
+    path: '/statistics', component: () => import('../views/StatisticsPage')
+  }, {
+    path: '/export', component: () => import('../shared/ComingSoon')
+  }, {
+    path: '/notify', component: () => import('../shared/ComingSoon')
+  }, {
+    path: '/punchin', component: () => import('../views/PunchIn')
   }
 ];
