@@ -12,8 +12,14 @@ export const usePunchIn = defineStore('counter', () => {
 
   function increment() {
     setInterval(() => {
-      if (gowork.value) {
-        gowork.value = new Date().getTime();
+      if (gowork.value && gohometime.value) {
+        time.value = gohometime.value - gowork.value;
+
+        hour.value = Math.floor(time.value / 1000 / 60 / 60 % 24);
+        minute.value = Math.floor(time.value / 1000 / 60 % 60);
+        second.value = Math.floor(time.value / 1000 % 60);
+        //倒计时
+        gowork.value += 1000;
       }
     }, 1000);
   }

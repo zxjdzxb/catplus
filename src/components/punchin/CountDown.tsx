@@ -17,27 +17,15 @@ export const CountDown = defineComponent({
     const hideDatePicker = () => refDatePickerVisible.value = false;
     const setDate = (date: Date) => {
       store.gowork = date.getTime();
-
+      store.gohometime = store.gowork+ 8 * 60 * 60 * 1000
       hideDatePicker();
     };
-    watchEffect(() => {
-      //计算时间差 转换成时分秒
-      if (store.gowork) {
-        store.gohometime = new Date(store.gowork).setHours(18, 0, 0, 0);
-        store.time = store.gohometime - store.gowork;
-        store.hour = Math.floor(store.time / 1000 / 60 / 60 % 24);
-        store.minute = Math.floor(store.time / 1000 / 60 % 60);
-        store.second = Math.floor(store.time / 1000 % 60);
-      }
-    });
     store.increment();
-
-
     return () => (
       <div class={s.wrapper}>
         <div>
           <span>
-            <span onClick={showDatePicker}>当前时间<input value={store.gowork ? new Date(store.gowork) : new Date()}/></span>
+            <span onClick={showDatePicker}>签到时间<input value={store.gowork ? new Date(store.gowork) : null}/></span>
             <Popup position="bottom" v-model:show={refDatePickerVisible.value}>
               <DatetimePicker modelValue={store.gowork ? new Date(store.gowork) : new Date()}
                               type="datetime" title="选择年月日"
@@ -45,7 +33,6 @@ export const CountDown = defineComponent({
                               min-date={new Date(2020, 0, 1)}
               />
             </Popup>
-
           </span>
         </div>
         <div>
