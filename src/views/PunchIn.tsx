@@ -16,7 +16,8 @@ export const PunchIn = defineComponent({
     const end = ref<number | undefined>();
     watchEffect(() => {
       if (store.gowork) {
-        end.value = store.gowork + 9 * 60 * 60 * 1000;
+        //18:00 end.value
+        end.value = new Date(new Date(store.gowork).toLocaleDateString()).getTime() + 18 * 60 * 60 * 1000;
       }
     });
     return () => <>
