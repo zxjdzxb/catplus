@@ -1,7 +1,9 @@
-import {defineComponent, PropType} from 'vue';
+import {defineComponent, PropType, ref, watchEffect} from 'vue';
 import s from './PunchIn.module.scss';
 import {RouterView} from 'vue-router';
 import {CountDown} from '../components/punchin/CountDown';
+import {usePunchIn} from '../stores/usePunchIn';
+
 
 export const PunchIn = defineComponent({
   props: {
@@ -10,9 +12,16 @@ export const PunchIn = defineComponent({
     }
   },
   setup: (props, context) => {
+    const store = usePunchIn();
+    const end = ref<number | undefined>();
+    watchEffect(() => {
+      if (store.gowork) {
+        end.value = store.gowork + 9 * 60 * 60 * 1000;
+      }
+    });
     return () => <>
-      <CountDown />
-   </>;
+      <CountDown end={end.value}/>
+    </>;
   }
 });
 

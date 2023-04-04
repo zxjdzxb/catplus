@@ -9,12 +9,10 @@ export const usePunchIn = defineStore('counter', () => {
   const hour = ref<number>();
   const minute = ref<number>();
   const second = ref<number>();
-
-  function increment() {
+  function countdown() {
     setInterval(() => {
       if (gowork.value && gohometime.value) {
         time.value = gohometime.value - gowork.value;
-
         hour.value = Math.floor(time.value / 1000 / 60 / 60 % 24);
         minute.value = Math.floor(time.value / 1000 / 60 % 60);
         second.value = Math.floor(time.value / 1000 % 60);
@@ -23,5 +21,5 @@ export const usePunchIn = defineStore('counter', () => {
       }
     }, 1000);
   }
-  return { gowork, gohometime, time, hour, minute, second ,increment}
+  return { gowork, gohometime, time, hour, minute, second , countdown}
 })
