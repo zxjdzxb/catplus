@@ -1,6 +1,6 @@
 //import store from "@/store"
 import {defineStore} from 'pinia';
-import {computed, ref, watchEffect} from 'vue';
+import {ref} from 'vue';
 
 export const usePunchIn = defineStore('counter', () => {
   const gowork = ref<number>();
@@ -9,8 +9,10 @@ export const usePunchIn = defineStore('counter', () => {
   const hour = ref<number>();
   const minute = ref<number>();
   const second = ref<number>();
+  let timer:any;
   function countdown() {
-    setInterval(() => {
+    clearInterval(timer);
+      timer = setInterval(() => {
       if (gowork.value && gohometime.value) {
         time.value = gohometime.value - gowork.value;
         hour.value = Math.floor(time.value / 1000 / 60 / 60 % 24);
@@ -20,6 +22,7 @@ export const usePunchIn = defineStore('counter', () => {
         gowork.value += 1000;
       }
     }, 1000);
+
   }
   return { gowork, gohometime, time, hour, minute, second , countdown}
 })

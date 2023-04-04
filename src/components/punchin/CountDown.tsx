@@ -1,4 +1,4 @@
-import {computed, defineComponent, PropType, ref, watchEffect} from 'vue';
+import {defineComponent, PropType, ref, watchEffect} from 'vue';
 import s from './CountDown.module.scss';
 import {DatetimePicker, Popup} from 'vant';
 import {usePunchIn} from '../../stores/usePunchIn';
@@ -48,6 +48,8 @@ export const CountDown = defineComponent({
 
       });
     };
+
+
     store.countdown();
     return () => (
       <div class={s.wrapper}>
