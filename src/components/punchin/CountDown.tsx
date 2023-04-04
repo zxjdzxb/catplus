@@ -49,26 +49,32 @@ export const CountDown = defineComponent({
       });
     };
     store.countdown();
-
-
     return () => (
       <div class={s.wrapper}>
-        <div>
-          <span>
-            <span onClick={showDatePicker}>签到<input onClick={Prodate} placeholder="查看签到时间" value={store.gowork ? time.value : null}/>
-            </span>
-            <Popup position="bottom" v-model:show={refDatePickerVisible.value}>
-              <DatetimePicker modelValue={store.gowork ? new Date(store.gowork) : new Date()}
-                              type="datetime" title="选择年月日"
-                              onConfirm={setDate} onCancel={hideDatePicker}
-                              min-date={new Date(2020, 0, 1)}
-              />
-            </Popup>
-          </span>
+        <div class={s.sgin}>
+          <span onClick={showDatePicker}>开始签到</span>
         </div>
-        <div>
-          <span>距离下班还有： </span>
-          {store.gowork ? <span>{store.hour}时{store.minute}分{store.second}秒</span> : <span>请选择时间</span>}
+        <Popup position="bottom" v-model:show={refDatePickerVisible.value}>
+          <DatetimePicker modelValue={store.gowork ? new Date(store.gowork) : new Date()}
+                          type="datetime" title="选择年月日"
+                          onConfirm={setDate} onCancel={hideDatePicker}
+                          min-date={new Date(2020, 0, 1)}
+          />
+        </Popup>
+        <div class={s.prompt}>
+          <input class={s.look} onClick={Prodate} placeholder="查看签到时间" readonly={true}
+                 value={store.gowork ? time.value : null}/>
+
+          <div class={s.cd}>
+            <h2>距离下班还有： </h2>
+            {store.gowork ?
+              <span class={s.time}>
+              <p class={s.hour}>{store.hour}时</p>
+              <p class={s.minute}>{store.minute}分</p>
+              <p class={s.second}>{store.second}秒</p>
+              </span> :
+              <span class={s.time}>请签到</span>}
+          </div>
         </div>
       </div>
     );
