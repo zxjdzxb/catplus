@@ -3,6 +3,7 @@ import s from './PunchIn.module.scss';
 import {RouterView} from 'vue-router';
 import {CountDown} from '../components/punchin/CountDown';
 import {usePunchIn} from '../stores/usePunchIn';
+import {Clock} from '../components/punchin/Clock';
 
 
 export const PunchIn = defineComponent({
@@ -22,6 +23,7 @@ export const PunchIn = defineComponent({
     });
     return () => <>
       <CountDown end={end.value}/>
+      <Clock/>
     </>;
   }
 });
