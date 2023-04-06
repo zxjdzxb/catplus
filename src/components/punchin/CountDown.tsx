@@ -2,6 +2,7 @@ import {defineComponent, PropType, ref, watchEffect} from 'vue';
 import s from './CountDown.module.scss';
 import {DatetimePicker, Popup} from 'vant';
 import {usePunchIn} from '../../stores/usePunchIn';
+import {Clock} from './Clock';
 
 export const CountDown = defineComponent({
   props: {
@@ -78,6 +79,8 @@ export const CountDown = defineComponent({
               <span class={s.time}>请签到</span>}
           </div>
         </div>
+        <Clock/>
+
       </div>
     );
   }

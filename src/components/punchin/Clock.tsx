@@ -26,12 +26,12 @@ export const Clock = defineComponent({
       <div class={s.wrapper}>
       <div>
         <label
-        >Elapsed Time: <progress value={elapsed.value / duration.value}></progress
+        >进度条: <progress value={elapsed.value / duration.value}></progress
         ></label>
       </div>
         <div>{ (elapsed.value / 1000).toFixed(1) }s</div>
         <div>
-          Duration: <input type="range" v-model={duration.value} min="1" max={duration.value*5} />
+          距离时间: <input type="range" v-model={duration.value} min="1" max={30000} />
           { (duration.value / 1000).toFixed(1) }s
         </div>
         <button onClick ={()=>elapsed.value = 0}>Reset</button>

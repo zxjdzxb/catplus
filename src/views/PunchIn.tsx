@@ -23,7 +23,6 @@ export const PunchIn = defineComponent({
     });
     return () => <>
       <CountDown end={end.value}/>
-      <Clock/>
     </>;
   }
 });
