@@ -18,7 +18,8 @@
     "svgstore": "3.0.1",
     "vant": "3.4.8",
     "vue": "3.2.31",
-    "vue-router": "4.0.14"
+    "vue-router": "4.0.14",
+    "vue-skycon": "^1.0.4"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "3.0.0",

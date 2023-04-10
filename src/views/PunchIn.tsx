@@ -4,6 +4,7 @@ import {RouterView} from 'vue-router';
 import {CountDown} from '../components/punchin/CountDown';
 import {usePunchIn} from '../stores/usePunchIn';
 import {Clock} from '../components/punchin/Clock';
+import {Weather} from '../components/punchin/Weather';
 
 
 export const PunchIn = defineComponent({
@@ -22,6 +23,7 @@ export const PunchIn = defineComponent({
       }
     });
     return () => <>
+      <Weather/>
       <CountDown end={end.value}/>
     </>;
   }
