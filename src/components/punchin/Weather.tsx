@@ -78,7 +78,6 @@ export const Weather = defineComponent({
       }
       return 'cloudy';
     }
-
     return () => (
       <div class={s.wrapper}>
         <div class={s.flexcenter}>
