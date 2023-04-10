@@ -78,11 +78,13 @@ export const Weather = defineComponent({
       }
       return 'cloudy';
     }
+
     return () => (
       <div class={s.wrapper}>
         <div class={s.flexcenter}>
           <Icon class={s.icons} name={iconCondition.value}/>
           <div class={s.font22}>
+            <span>{weather.city}</span>
             <span>{weather.temperature}℃ </span>
             <span>{weather.weather}</span>
           </div>

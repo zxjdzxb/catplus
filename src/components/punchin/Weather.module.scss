@@ -6,6 +6,9 @@
   .font22 {
     font-size: 20px;
     margin: 5px;
+    > span {
+      margin: 4px;
+    }
   }
 }
 
