@@ -7,7 +7,6 @@ import {history} from './shared/history';
 import {createPinia,storeToRefs} from 'pinia';
 import {useMeStore} from './stores/useMeStore';
 
-
 const router = createRouter({history, routes});
 
 const pinia = createPinia()

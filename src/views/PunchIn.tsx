@@ -5,6 +5,7 @@ import {CountDown} from '../components/punchin/CountDown';
 import {usePunchIn} from '../stores/usePunchIn';
 import {Clock} from '../components/punchin/Clock';
 import {Weather} from '../components/punchin/Weather';
+import {Position} from '../components/punchin/Position';
 
 
 export const PunchIn = defineComponent({
@@ -24,6 +25,7 @@ export const PunchIn = defineComponent({
     });
     return () => <>
       <Weather/>
+      <Position/>
       <CountDown end={end.value}/>
     </>;
   }
