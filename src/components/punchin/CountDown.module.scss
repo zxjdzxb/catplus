@@ -42,7 +42,8 @@
         font-size: 1.5rem;
         color: var(--total-income);
         display: flex;
-        flex-direction:row ;
+        justify-content: center;
+        padding: 16px;
         .hour{
           color: var(--welcome-bg-end);
         }

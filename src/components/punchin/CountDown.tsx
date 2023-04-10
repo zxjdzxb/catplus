@@ -71,15 +71,18 @@ export const CountDown = defineComponent({
           <div class={s.cd}>
             <h2>距离下班还有： </h2>
             {store.gowork ?
-              <span class={s.time}>
-              <p class={s.hour}>{store.hour}时</p>
-              <p class={s.minute}>{store.minute}分</p>
-              <p class={s.second}>{store.second}秒</p>
-              </span> :
+              <div>
+                <span class={s.time}>
+                <p class={s.hour}>{store.hour}时</p>
+                <p class={s.minute}>{store.minute}分</p>
+                <p class={s.second}>{store.second}秒</p>
+                </span>
+                <Clock duration={store.time}/>
+              </div>
+              :
               <span class={s.time}>请签到</span>}
           </div>
         </div>
-        <Clock/>
 
       </div>
     );
