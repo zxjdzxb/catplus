@@ -75,6 +75,8 @@ export const Weather = defineComponent({
         return 'fog';
       } else if (weather.includes('霾')) {
         return 'haze';
+      }else if (weather.includes('扬沙')) {
+        return 'hail';
       }
       return 'cloudy';
     }

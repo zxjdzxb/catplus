@@ -3,7 +3,7 @@ import s from './Icon.module.scss';
 
 export type IconName = 'add' | 'chart' | 'clock' | 'cloud' |
   'mangosteen' | 'pig' | 'menu' | 'charts' | 'notify' | 'export' | 'left' | 'date' | 'daytime' | 'night'
-  | 'nodate' | 'forward' | string | 'clear-day' | 'clear-night' | 'rain' | 'snow' | 'wind' | 'fog' | 'cloudy' | 'partly-cloudy-day'  |'hail';
+  | 'nodate' | 'forward' | string | 'clear-day' | 'clear-night' | 'rain' | 'snow' | 'wind' | 'fog' | 'cloudy' | 'partly-cloudy-day'  |'haze'|'hail';
 export const Icon = defineComponent({
   props: {
     name: {
