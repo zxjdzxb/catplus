@@ -23,10 +23,10 @@ export const usePunchIn = defineStore('counter', () => {
   });
   function countdown() {
     clearTimeout(timer);
-    if (!gowork.value) { return;}
     hour.value = Math.floor(time.value / 1000 / 60 / 60 % 24);
     minute.value = Math.floor(time.value / 1000 / 60 % 60);
     second.value = Math.floor(time.value / 1000 % 60);
+    //@ts-ignore
     gowork.value += 1000;
     timer = setTimeout(() => {
       countdown();
