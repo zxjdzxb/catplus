@@ -54,9 +54,7 @@ export const CountDown = defineComponent({
     store.countdown();
     return () => (
       <div class={s.wrapper}>
-        <div class={s.sgin}>
-          <span onClick={showDatePicker}>开始签到</span>
-        </div>
+
         <Popup position="bottom" v-model:show={refDatePickerVisible.value}>
           <DatetimePicker modelValue={store.gowork ? new Date(store.gowork) : new Date()}
                           type="datetime" title="选择年月日"
@@ -80,7 +78,9 @@ export const CountDown = defineComponent({
                 <Clock duration={store.time}/>
               </div>
               :
-              <span class={s.time}>请签到</span>}
+              <div class={s.sgin}>
+                <span onClick={showDatePicker}>开始签到</span>
+              </div>}
           </div>
         </div>
 
