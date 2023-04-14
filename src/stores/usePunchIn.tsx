@@ -9,19 +9,6 @@ export const usePunchIn = defineStore('counter', () => {
   const minute = ref<number>();
   const second = ref<number>();
   let timer: any = null;
-  //function countdown() {
-  //  clearInterval(timer);
-  //    timer = setInterval(() => {
-  //    if (gowork.value && gohometime.value) {
-  //      time.value = gohometime.value - gowork.value;
-  //      hour.value = Math.floor(time.value / 1000 / 60 / 60 % 24);
-  //      minute.value = Math.floor(time.value / 1000 / 60 % 60);
-  //      second.value = Math.floor(time.value / 1000 % 60);
-  //      //倒计时
-  //      gowork.value += 1000;
-  //    }
-  //  }, 1000);
-  //}
   const time = computed({
     get: () => {
       if (gowork.value && gohometime.value) {
@@ -34,7 +21,6 @@ export const usePunchIn = defineStore('counter', () => {
       return val;
     }
   });
-
   function countdown() {
     clearTimeout(timer);
     if (!gowork.value) { return;}
@@ -44,7 +30,6 @@ export const usePunchIn = defineStore('counter', () => {
     gowork.value += 1000;
     timer = setTimeout(() => {
       countdown();
-
     }, 1000);
   }
 

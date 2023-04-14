@@ -31,16 +31,14 @@ export const Clock = defineComponent({
     });
     return () => (
       <div class={s.wrapper}>
-        <div>
           <label
           >进度条: <progress value={elapsed.value / duration.value}></progress
           ></label>
           <div>{(elapsed.value / 1000).toFixed(1)}s</div>
-        </div>
-        <div>
-          距离时间: <input type="range" v-model={duration.value} min="1" max={30000}/>
-          {(duration.value / 1000).toFixed(1)}s
-        </div>
+        {/*<div>*/}
+        {/*  距离时间: <input type="range" v-model={duration.value} min="1" max={30000}/>*/}
+        {/*  {(duration.value / 1000).toFixed(1)}s*/}
+        {/*</div>*/}
       </div>
     );
   }
