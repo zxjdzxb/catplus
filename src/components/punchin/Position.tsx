@@ -18,7 +18,7 @@ export const Position = defineComponent({
       path: [],
       current_position: [],
     });
-    const circle = ref<number[]>([]);
+    const ClockLngLat = ref<number[]>([]);
     const key = ref('91fe89880ecb5819480f9e5f16d09e4a');
     const getLocationInfo = async () => {
       const params = {
@@ -26,8 +26,8 @@ export const Position = defineComponent({
         address: '北京市朝阳区朝阳公园'
       };
       const {data} = await axios.get('https://restapi.amap.com/v3/geocode/geo?parameters', {params});
-      circle.value.push(Number(data.geocodes[0].location.split(',')[0]));
-      circle.value.push(Number(data.geocodes[0].location.split(',')[1]));
+      ClockLngLat.value.push(Number(data.geocodes[0].location.split(',')[0]));
+      ClockLngLat.value.push(Number(data.geocodes[0].location.split(',')[1]));
     };
 
     function initMap() {
@@ -40,11 +40,27 @@ export const Position = defineComponent({
             //设置地图容器id
             viewMode: '2D', //是否为3D地图模式
             zoom: 16, //初始化地图级别
-            center: circle.value, //初始化地图中心点位置
+            center: ClockLngLat.value, //初始化地图中心点位置
           });
           //添加插件
-          AMap.plugin(['AMap.ToolBar', 'AMap.Scale', 'AMap.HawkEye'], function () {
-            //异步同时加载多个插件
+          AMap.plugin(['AMap.ToolBar', 'AMap.Scale', 'AMap.HawkEye', 'AMap.Circle'], function () {
+            var circle = new AMap.Circle({
+              center: ClockLngLat.value,
+              radius: 500, //半径
+              borderWeight: 1,
+              strokeColor: "#FF33FF",
+              strokeOpacity: 1,
+              strokeWeight: 2,
+              fillOpacity: 0.4,
+              strokeStyle: 'dashed',
+              strokeDasharray: [10, 10],
+               //线样式还支持 'dashed'
+              fillColor: '#1791fc',
+              zIndex: 50,
+            })
+            map.add(circle);
+            // 缩放地图到合适的视野级别
+            map.setFitView([ circle ])
             map.addControl(new AMap.HawkEye()); //显示缩略图
             map.addControl(new AMap.Scale()); //显示当前地图中心的比例尺
           });
