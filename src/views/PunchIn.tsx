@@ -1,11 +1,11 @@
 import {defineComponent, PropType, ref, watchEffect} from 'vue';
 import s from './PunchIn.module.scss';
-import {RouterView} from 'vue-router';
 import {CountDown} from '../components/punchin/CountDown';
 import {usePunchIn} from '../stores/usePunchIn';
-import {Clock} from '../components/punchin/Clock';
 import {Weather} from '../components/punchin/Weather';
 import {Position} from '../components/punchin/Position';
+import {MainLayout} from '../layouts/MainLayout';
+import {BackIcon} from '../shared/BackIcon';
 
 
 export const PunchIn = defineComponent({
@@ -24,9 +24,15 @@ export const PunchIn = defineComponent({
       }
     });
     return () => <>
-      <Weather/>
-      <Position/>
-      <CountDown end={end.value}/>
+      <MainLayout class={s.layout}>{{
+        title: () => '倒计时',
+        icon: () => <BackIcon/>,
+        default: () => <>
+          <Weather/>
+          <Position/>
+          <CountDown end={end.value}/>
+        </>
+      }}</MainLayout>
     </>;
   }
 });
