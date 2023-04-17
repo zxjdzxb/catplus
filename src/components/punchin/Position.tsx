@@ -50,9 +50,9 @@ export const Position = defineComponent({
               borderWeight: 1,
               strokeColor: "#FF33FF",
               strokeOpacity: 1,
-              strokeWeight: 2,
+              strokeWeight: 1,
               fillOpacity: 0.4,
-              strokeStyle: 'dashed',
+              //strokeStyle: 'dashed',
               strokeDasharray: [10, 10],
                //线样式还支持 'dashed'
               fillColor: '#1791fc',
@@ -61,7 +61,7 @@ export const Position = defineComponent({
             map.add(circle);
             // 缩放地图到合适的视野级别
             map.setFitView([ circle ])
-            map.addControl(new AMap.HawkEye()); //显示缩略图
+            //map.addControl(new AMap.HawkEye()); //显示缩略图
             map.addControl(new AMap.Scale()); //显示当前地图中心的比例尺
           });
           AMap.plugin('AMap.Geolocation', function () {
