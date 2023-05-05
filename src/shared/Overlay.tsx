@@ -34,10 +34,10 @@ export const Overlay = defineComponent({
       {to: '/items', iconName: 'mangosteen', text: '欢迎使用'},
       {to: '/items/create', iconName: 'pig', text: '记一笔账'},
       {to: '/statistics', iconName: 'charts', text: '统计图表'},
+      {to: '/punchin', iconName: 'punchin', text: '打卡'},
+      {to: '/todolist', iconName: 'todolist', text: '记事本'},
       {to: '/export', iconName: 'export', text: '导出数据'},
       {to: '/notify', iconName: 'notify', text: '记账提醒'},
-      {to: '/punchin', iconName: 'notify', text: '打卡'},
-      {to: '/todolist', iconName: 'notify', text: '记事本'},
 
     ]);
 
