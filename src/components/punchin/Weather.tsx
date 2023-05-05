@@ -41,8 +41,9 @@ export const Weather = defineComponent({
     const getLocationInfo = async () => {
       const params = {
         key: key.value,
+        ip: '114.247.50.2'
       };
-      const {data} = await axios.get('https://restapi.amap.com/v3/ip', {params});
+      const {data} = await axios.get('https://restapi.amap.com/v3/ip?parameters', {params});
       // data.adcode值为获取天气需要的city值
       getWeather(data.adcode);
     };
@@ -51,7 +52,7 @@ export const Weather = defineComponent({
         key: key.value,
         city: adcode
       };
-      const {data} = await axios.get(`https://restapi.amap.com/v3/weather/weatherInfo`, {params});
+      const {data} = await axios.get(`https://restapi.amap.com/v3/weather/weatherInfo?parameters`, {params});
       Object.assign(weather, data.lives[0]);
       iconCondition.value = setWeatherIcon(weather.weather);
     };

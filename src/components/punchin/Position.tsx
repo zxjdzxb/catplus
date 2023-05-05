@@ -40,7 +40,6 @@ export const Position = defineComponent({
             //设置地图容器id
             viewMode: '2D', //是否为3D地图模式
             zoom: 16, //初始化地图级别
-            center: ClockLngLat.value, //初始化地图中心点位置
           });
           //添加插件
           AMap.plugin(['AMap.ToolBar', 'AMap.Scale', 'AMap.HawkEye', 'AMap.Circle'], function () {
@@ -64,26 +63,40 @@ export const Position = defineComponent({
             //map.addControl(new AMap.HawkEye()); //显示缩略图
             map.addControl(new AMap.Scale()); //显示当前地图中心的比例尺
           });
-          AMap.plugin('AMap.Geolocation', function () {
+          AMap.plugin('AMap.Geolocation', function() {
             var geolocation = new AMap.Geolocation({
               enableHighAccuracy: true,//是否使用高精度定位，默认:true
-              timeout: 10000,          //超过10秒后停止定位，默认：5s
-              buttonPosition: 'RB',    //定位按钮的停靠位置
-              buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+              timeout: 20000,          //超过10秒后停止定位，默认：5s
+              position: 'RB',    //定位按钮的停靠位置
+              offset: [10, 20], //定位按钮与设置的停靠位置的偏移量，默认：[10, 20]
               zoomToAccuracy: true,   //定位成功后是否自动调整地图视野到定位点
 
             });
             map.addControl(geolocation);
-
+            geolocation.getCurrentPosition(function(status:string,result:object){
+              if(status=='complete'){
+                onComplete(result)
+              }else{
+                onError(result)
+              }
+            });
+            function onComplete(data:any) {
+              // data是具体的定位信息
+              console.log(data);
+            }
+            function onError(data:any) {
+              // 定位出错
+              console.error(data);
+            }
           });
           // 单击
           map.on('click', (e: any) => {
-            // console.log(e);
+             console.log(e);
             state.current_position = [e.lnglat.KL, e.lnglat.kT];
             //@ts-ignore
             state.path.push([e.lnglat.KL, e.lnglat.kT]);
-            addMarker();
-            addPolyLine();
+            //addMarker();
+            //addPolyLine();
             // 地图按照适合展示图层内数据的缩放等级展示
             // map.setFitView();
           });
