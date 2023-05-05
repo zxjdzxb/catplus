@@ -8,6 +8,7 @@ export const usePunchIn = defineStore('counter', () => {
   const hour = ref<number>();
   const minute = ref<number>();
   const second = ref<number>();
+  const countdowntime = ref<string>('');
   let timer: any = null;
   const time = computed({
     get: () => {
@@ -21,11 +22,14 @@ export const usePunchIn = defineStore('counter', () => {
       return val;
     }
   });
+
   function countdown() {
     clearTimeout(timer);
     hour.value = Math.floor(time.value / 1000 / 60 / 60 % 24);
     minute.value = Math.floor(time.value / 1000 / 60 % 60);
     second.value = Math.floor(time.value / 1000 % 60);
+
+    countdowntime.value = `${hour.value}时${minute.value}分${second.value}秒`;
     //@ts-ignore
     gowork.value += 1000;
     timer = setTimeout(() => {
@@ -33,5 +37,5 @@ export const usePunchIn = defineStore('counter', () => {
     }, 1000);
   }
 
-  return {gowork, gohometime, time, hour, minute, second, countdown};
+  return {gowork, gohometime, time, countdowntime, countdown};
 });

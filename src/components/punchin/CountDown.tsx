@@ -46,7 +46,6 @@ export const CountDown = defineComponent({
           seconds = seconds < 10 ? ('0' + seconds) : seconds;
           time.value = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
         }
-
       });
     };
 
@@ -69,9 +68,7 @@ export const CountDown = defineComponent({
                        value={store.gowork ? time.value : null}/>
                 <div>
                 <span class={s.time}>
-                <p class={s.hour}>{store.hour}时</p>
-                <p class={s.minute}>{store.minute}分</p>
-                <p class={s.second}>{store.second}秒</p>
+                {store.countdowntime}
                 </span>
                   <Clock duration={store.time}/>
                 </div>
