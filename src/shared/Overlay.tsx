@@ -38,7 +38,6 @@ export const Overlay = defineComponent({
       {to: '/todolist', iconName: 'todolist', text: '记事本'},
       {to: '/export', iconName: 'export', text: '导出数据'},
       {to: '/notify', iconName: 'notify', text: '记账提醒'},
-
     ]);
 
     const refSelected = ref<number>(0);
