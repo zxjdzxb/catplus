@@ -51,7 +51,7 @@ export const Position = defineComponent({
 
             function onComplete(data: any) {
               // data是具体的定位信息
-              console.log(data);
+              //console.log(data);
             }
 
             function onError(data: any) {

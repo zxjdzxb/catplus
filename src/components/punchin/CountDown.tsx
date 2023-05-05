@@ -3,6 +3,7 @@ import s from './CountDown.module.scss';
 import {DatetimePicker, Popup} from 'vant';
 import {usePunchIn} from '../../stores/usePunchIn';
 import {Clock} from './Clock';
+import Holiday from './Holiday';
 
 export const CountDown = defineComponent({
   props: {
@@ -71,6 +72,7 @@ export const CountDown = defineComponent({
                 {store.countdowntime}
                 </span>
                   <Clock duration={store.time}/>
+                  <Holiday/>
                 </div>
               </div>
               :
