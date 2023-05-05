@@ -29,8 +29,8 @@ export const PunchIn = defineComponent({
         icon: () => <BackIcon/>,
         default: () => <>
           <Weather/>
-          {/*<Position/>*/}
-          {/*<CountDown end={end.value}/>*/}
+          <Position/>
+          <CountDown end={end.value}/>
         </>
       }}</MainLayout>
     </>;
