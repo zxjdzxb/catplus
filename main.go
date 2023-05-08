@@ -3,8 +3,9 @@ package main
 import (
 	"catplus-server/database"
 	"catplus-server/middleware"
-	"crypto/rand"
-	"encoding/hex"
+	"catplus-server/model"
+	"log"
+
 	"net/http"
 	"os"
 	"time"
@@ -41,32 +42,38 @@ func main() {
 		email := c.PostForm("email")
 
 		// 从数据库中查找用户
-		var user User
-		if err := db.Where("email = ?", email).First(&user).Error; err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+
+		// if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+		// 	c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		// 	return
+		// }
+
+		// // 生成 6 位随机验证码
+		codeStr, err := middleware.GenerateVerificationCode()
+		if err != nil {
+			log.Println("生成验证码失败：", err)
 			return
 		}
 
-		// 生成 6 位随机验证码
-		code := make([]byte, 3)
-		if _, err := rand.Read(code); err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to generate code"})
-			return
-		}
-		codeStr := hex.EncodeToString(code)
+		// // 将验证码保存到数据库
 
-		// 将验证码保存到数据库
 		expiry := time.Now().Add(time.Minute * 10) // 验证码有效期为 10 分钟
-		if err := db.Model(&user).Updates(User{
+		newUser := model.User{
+			Email:              email,
 			VerificationCode:   codeStr,
 			VerificationExpiry: expiry,
-		}).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save code"})
-			return
 		}
+		db.Create(&newUser)
+		// if err := db.Model(&user).Updates(User{
+		// 	VerificationCode:   codeStr,
+		// 	VerificationExpiry: expiry,
+		// }).Error; err != nil {
+		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save code"})
+		// 	return
+		// }
 
 		// 发送电子邮件
-		middleware.Message()
+		middleware.Message(email)
 
 		c.Status(http.StatusOK)
 	})

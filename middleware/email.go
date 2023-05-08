@@ -12,7 +12,7 @@ import (
 // 发送验证码到指定邮箱
 func SendVerificationCodeToEmail(email string) error {
 	// 生成随机的验证码
-	code, err := generateVerificationCode()
+	code, err := GenerateVerificationCode()
 	if err != nil {
 		log.Println("生成验证码失败：", err)
 		return err
@@ -46,7 +46,7 @@ func SendVerificationCodeToEmail(email string) error {
 }
 
 // generateVerificationCode 生成 6 位随机数字
-func generateVerificationCode() (string, error) {
+func GenerateVerificationCode() (string, error) {
 
 	code := rand.Intn(900000) + 100000
 	return strconv.Itoa(code), nil
@@ -58,8 +58,8 @@ func IsValidEmail(email string) bool {
 	return emailRegex.MatchString(email)
 }
 
-func Message() {
-	email := "1660154581@qq.com"
+func Message(emai string) {
+	email := emai
 	if !IsValidEmail(email) {
 		fmt.Println("邮箱格式不正确")
 		return
