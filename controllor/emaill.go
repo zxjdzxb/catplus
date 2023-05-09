@@ -1,6 +1,7 @@
 package controllor
 
 import (
+	"catplus-server/common"
 	"catplus-server/database"
 	"catplus-server/middleware"
 	"catplus-server/model"
@@ -83,7 +84,15 @@ func VerifyCode(c *gin.Context) {
 	}
 
 	// 验证成功，可以执行其他操作
-	// ...
+	token, err := common.ReleaseToken(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"code":    500,
+			"message": "系统异常",
+		})
+		log.Printf("token generate error : %v", err)
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "验证成功"})
+	c.JSON(http.StatusOK, gin.H{"message": "验证成功", "token": token})
 }
