@@ -12,7 +12,6 @@ import (
 )
 
 // VerificationCode 生成验证码
-
 func VerificationCode(c *gin.Context) {
 	email := c.PostForm("email")
 	db := database.GetDB()
@@ -34,15 +33,7 @@ func VerificationCode(c *gin.Context) {
 	}
 
 	//将验证码保存到数据库
-
 	expiry := time.Now().Add(time.Minute * 10) // 验证码有效期为 10 分钟
-	log.Println("expiry:", time.Now())
-	// newUser := model.User{
-	// 	Email:              email,
-	// 	VerificationCode:   codeStr,
-	// 	VerificationExpiry: expiry,
-	// }
-
 	if err := db.Model(&user).Updates(model.User{
 		VerificationCode:   codeStr,
 		VerificationExpiry: expiry,
@@ -53,16 +44,17 @@ func VerificationCode(c *gin.Context) {
 
 	// 发送电子邮件
 	if !middleware.IsValidEmail(email) {
-		log.Println("邮箱格式不正确")
+		log.Println("无效的邮箱地址：", email)
+		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的邮箱地址"})
 		return
 	}
 	if err := middleware.SendVerificationCodeToEmail(email, codeStr); err != nil {
-		log.Println("发送邮件失败：", err)
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "发送邮件失败："})
 		return
 	}
-	log.Println("验证码已发送到邮箱，请注意查收")
 
-	c.JSON(http.StatusOK, gin.H{"message": "verification code sent"})
+	c.JSON(http.StatusOK, gin.H{"message": "验证码已发送到邮箱，请注意查收"})
 
 }
 
@@ -93,5 +85,5 @@ func VerifyCode(c *gin.Context) {
 	// 验证成功，可以执行其他操作
 	// ...
 
-	c.JSON(http.StatusOK, gin.H{"message": "verification successful"})
+	c.JSON(http.StatusOK, gin.H{"message": "验证成功"})
 }
