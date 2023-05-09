@@ -2,13 +2,20 @@ package middleware
 
 import (
 	"bytes"
+	"catplus-server/common"
+	"catplus-server/database"
+	"catplus-server/model"
 	"fmt"
 	"html/template"
 	"log"
 	"math/rand"
+	"net/http"
 	"net/smtp"
 	"regexp"
 	"strconv"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // 发送验证码到指定邮箱
@@ -100,4 +107,50 @@ func generateEmailMessage(fromName, from, to, subject, code string) string {
 	// 生成邮件消息
 	message := fmt.Sprintf("From: %s <%s>\r\nTo: %s\r\nSubject: %s\r\nMIME-Version: 1.0\r\nContent-Type: text/html; charset=\"utf-8\"\r\n\r\n%s", fromName, from, to, subject, messageBody.String())
 	return message
+}
+
+func AuthMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		tokenString := c.GetHeader("Authorization")
+		//strings.HasPrefix(tokenString, "Bearer ")判断字符串是否以某个字符串开头
+		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"code": 401,
+				"msg":  "权限不足",
+			})
+			//c.Abort()阻止调用后续的处理程序
+			c.Abort()
+			return
+		}
+		// 验证通过后获取claims中的userId
+		tokenString = tokenString[7:] //截取字符
+
+		token, claims, err := common.ParseToken(tokenString)
+
+		if err != nil || !token.Valid {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"code": 401,
+				"msg":  "权限不足",
+			})
+			c.Abort()
+			return
+		}
+		userId := claims.UserId
+		DB := database.GetDB()
+		var user model.User
+		DB.First(&user, userId)
+		// 用户
+		if user.ID == 0 {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"code": 401,
+				"msg":  "权限不足",
+			})
+			c.Abort()
+			return
+		}
+		// 用户存在 将user信息写入上下文
+		c.Set("user", user)
+		c.Next()
+
+	}
 }

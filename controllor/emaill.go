@@ -22,7 +22,6 @@ func VerificationCode(c *gin.Context) {
 	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
 		if err := db.Create(&model.User{Email: email}).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
-			return
 		}
 	}
 
@@ -95,4 +94,12 @@ func VerifyCode(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "验证成功", "token": token})
+}
+
+func Info(c *gin.Context) {
+	user, _ := c.Get("user")
+	c.JSON(http.StatusOK, gin.H{
+		"code": 200,
+		"data": gin.H{"user": user},
+	})
 }
