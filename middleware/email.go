@@ -52,16 +52,3 @@ func IsValidEmail(email string) bool {
 	emailRegex := regexp.MustCompile(`^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$`)
 	return emailRegex.MatchString(email)
 }
-
-// func Message(emai string) {
-// 	email := emai
-// 	if !IsValidEmail(email) {
-// 		fmt.Println("邮箱格式不正确")
-// 		return
-// 	}
-// 	if err := SendVerificationCodeToEmail(email); err != nil {
-// 		fmt.Println("发送邮件失败：", err)
-// 		return
-// 	}
-// 	fmt.Println("验证码已发送到邮箱，请注意查收")
-// }
