@@ -1,0 +1,4 @@
+.vscode
+.idea
+catplus-server.exe
+config/application.yaml

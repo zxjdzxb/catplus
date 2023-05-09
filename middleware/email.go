@@ -16,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 // 发送验证码到指定邮箱
@@ -29,8 +30,8 @@ func SendVerificationCodeToEmail(email string, code string) error {
 	smtpServer := "smtp.qq.com"
 
 	// 发送者邮箱账号和密码
-	from := "1660154581@qq.com"
-	password := "ngtyjjpxzpbkbeea"
+	from := viper.GetString("email.username")
+	password := viper.GetString("email.password")
 
 	// 收件人邮箱
 	to := email

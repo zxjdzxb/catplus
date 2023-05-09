@@ -8,9 +8,9 @@ import (
 )
 
 func CollectRoute(r *gin.Engine) *gin.Engine {
-	r.POST("/generate-code", controllor.VerificationCode)
-	r.POST("/verify-code", controllor.VerifyCode)
-	r.GET("/api/auth/info", middleware.AuthMiddleware(), controllor.Info)
+	r.POST("/api/v1/validation_codes", controllor.VerificationCode)
+	r.POST("/api/v1/session", controllor.VerifyCode)
+	r.GET("/api/v1/me", middleware.AuthMiddleware(), controllor.Info)
 
 	return r
 }
