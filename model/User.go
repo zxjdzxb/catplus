@@ -26,6 +26,6 @@ type Tag struct {
 	Name      string `gorm:"type:varchar(20);not null;unique"`
 	Sign      string `gorm:"type:varchar(20);not null;unique"`
 	Kind      string `gorm:"type:varchar(20);not null;unique"`
-	UserID    uint   `gorm:"primaryKey;autoIncrement"`
+	UserID    uint   `gorm:"primaryKey"`
 	DeletedAt *time.Time
 }
