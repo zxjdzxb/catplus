@@ -18,7 +18,6 @@ func InitDb() *gorm.DB {
 	username := viper.GetString("datasource.username")
 	password := viper.GetString("datasource.password")
 	charset := viper.GetString("datasource.charset")
-	// loc := viper.Get("datasource.loc")
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local",
 		username, password, host, port, database, charset)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
@@ -26,6 +25,7 @@ func InitDb() *gorm.DB {
 		panic("failed to connect database,err:" + err.Error())
 	}
 	db.AutoMigrate(&model.User{})
+	db.AutoMigrate(&model.Tag{})
 	DB = db
 	return db
 }

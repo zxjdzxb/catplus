@@ -14,8 +14,10 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/spf13/viper"
 )
 
@@ -113,45 +115,58 @@ func generateEmailMessage(fromName, from, to, subject, code string) string {
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
-		//strings.HasPrefix(tokenString, "Bearer ")判断字符串是否以某个字符串开头
 		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code": 401,
 				"msg":  "权限不足",
 			})
-			//c.Abort()阻止调用后续的处理程序
 			c.Abort()
 			return
 		}
-		// 验证通过后获取claims中的userId
-		tokenString = tokenString[7:] //截取字符
-
+		tokenString = tokenString[7:]
 		token, claims, err := common.ParseToken(tokenString)
 
 		if err != nil || !token.Valid {
+			if err == jwt.ErrSignatureInvalid {
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"code": 401,
+					"msg":  "token签名无效",
+				})
+			} else {
+				c.JSON(http.StatusUnauthorized, gin.H{
+					"code": 401,
+					"msg":  "无效的token",
+				})
+			}
+			c.Abort()
+			return
+		}
+
+		// 验证token是否过期
+		if time.Now().Unix() > claims.ExpiresAt {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code": 401,
-				"msg":  "权限不足",
+				"msg":  "token已过期",
 			})
 			c.Abort()
 			return
 		}
+
 		userId := claims.UserId
 		DB := database.GetDB()
 		var user model.User
 		DB.First(&user, userId)
-		// 用户
+
 		if user.ID == 0 {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"code": 401,
-				"msg":  "权限不足",
+				"msg":  "用户不存在",
 			})
 			c.Abort()
 			return
 		}
-		// 用户存在 将user信息写入上下文
+
 		c.Set("user", user)
 		c.Next()
-
 	}
 }
