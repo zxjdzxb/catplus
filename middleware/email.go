@@ -10,13 +10,8 @@ import (
 )
 
 // 发送验证码到指定邮箱
-func SendVerificationCodeToEmail(email string) error {
-	// 生成随机的验证码
-	code, err := GenerateVerificationCode()
-	if err != nil {
-		log.Println("生成验证码失败：", err)
-		return err
-	}
+func SendVerificationCodeToEmail(email string, code string) error {
+
 	// 邮件正文内容
 	fromName := "Sender Name"
 	subject := "Test Email"
@@ -37,7 +32,7 @@ func SendVerificationCodeToEmail(email string) error {
 	auth := smtp.PlainAuth("", from, password, smtpServer)
 
 	// 发送邮件
-	err = smtp.SendMail(smtpServer+":587", auth, from, to, []byte(message))
+	err := smtp.SendMail(smtpServer+":587", auth, from, to, []byte(message))
 	if err != nil {
 		return err
 	}
@@ -58,15 +53,15 @@ func IsValidEmail(email string) bool {
 	return emailRegex.MatchString(email)
 }
 
-func Message(emai string) {
-	email := emai
-	if !IsValidEmail(email) {
-		fmt.Println("邮箱格式不正确")
-		return
-	}
-	if err := SendVerificationCodeToEmail(email); err != nil {
-		fmt.Println("发送邮件失败：", err)
-		return
-	}
-	fmt.Println("验证码已发送到邮箱，请注意查收")
-}
+// func Message(emai string) {
+// 	email := emai
+// 	if !IsValidEmail(email) {
+// 		fmt.Println("邮箱格式不正确")
+// 		return
+// 	}
+// 	if err := SendVerificationCodeToEmail(email); err != nil {
+// 		fmt.Println("发送邮件失败：", err)
+// 		return
+// 	}
+// 	fmt.Println("验证码已发送到邮箱，请注意查收")
+// }

@@ -16,9 +16,9 @@ import (
 
 type User struct {
 	ID                 uint   `gorm:"primaryKey"`
-	Email              string `gorm:"unique"`
-	Password           string
-	VerificationCode   string
+	Email              string `gorm:"not null;unique"`
+	Password           string `gorm:"size:25"`
+	VerificationCode   string `gorm:"size:6"`
 	VerificationExpiry time.Time
 }
 
@@ -31,7 +31,7 @@ func main() {
 	defer sqlDB.Close()
 
 	// 自动迁移 User 模型
-	db.AutoMigrate(&User{})
+	db.AutoMigrate(&model.User{})
 
 	// 创建 Gin 引擎
 	r := gin.Default()
@@ -41,12 +41,14 @@ func main() {
 		// 从请求中获取电子邮件地址
 		email := c.PostForm("email")
 
-		// 从数据库中查找用户
-
-		// if err := db.Where("email = ?", email).First(&user).Error; err != nil {
-		// 	c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
-		// 	return
-		// }
+		// 从数据库中查找用户,若没有则创建
+		var user model.User
+		if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+			if err := db.Create(&model.User{Email: email}).Error; err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
+				return
+			}
+		}
 
 		// // 生成 6 位随机验证码
 		codeStr, err := middleware.GenerateVerificationCode()
@@ -58,24 +60,33 @@ func main() {
 		// // 将验证码保存到数据库
 
 		expiry := time.Now().Add(time.Minute * 10) // 验证码有效期为 10 分钟
-		newUser := model.User{
-			Email:              email,
-			VerificationCode:   codeStr,
-			VerificationExpiry: expiry,
-		}
-		db.Create(&newUser)
-		// if err := db.Model(&user).Updates(User{
+		log.Println("expiry:", time.Now())
+		// newUser := model.User{
+		// 	Email:              email,
 		// 	VerificationCode:   codeStr,
 		// 	VerificationExpiry: expiry,
-		// }).Error; err != nil {
-		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save code"})
-		// 	return
 		// }
 
-		// 发送电子邮件
-		middleware.Message(email)
+		if err := db.Model(&user).Updates(model.User{
+			VerificationCode:   codeStr,
+			VerificationExpiry: expiry,
+		}).Error; err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save code"})
+			return
+		}
 
-		c.Status(http.StatusOK)
+		// 发送电子邮件
+		if !middleware.IsValidEmail(email) {
+			log.Println("邮箱格式不正确")
+			return
+		}
+		if err := middleware.SendVerificationCodeToEmail(email, codeStr); err != nil {
+			log.Println("发送邮件失败：", err)
+			return
+		}
+		log.Println("验证码已发送到邮箱，请注意查收")
+
+		c.JSON(http.StatusOK, gin.H{"message": "verification code sent"})
 	})
 
 	// 处理验证验证码的请求

@@ -3,6 +3,7 @@ package database
 import (
 	"catplus-server/model"
 	"fmt"
+
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -17,7 +18,8 @@ func InitDb() *gorm.DB {
 	username := viper.GetString("datasource.username")
 	password := viper.GetString("datasource.password")
 	charset := viper.GetString("datasource.charset")
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=true",
+	// loc := viper.Get("datasource.loc")
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=%s&parseTime=True&loc=Local",
 		username, password, host, port, database, charset)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

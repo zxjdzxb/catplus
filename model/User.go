@@ -11,8 +11,8 @@ import "time"
 
 type User struct {
 	ID                 uint   `gorm:"primaryKey"`
-	Email              string `gorm:"unique"`
-	Password           string
-	VerificationCode   string
+	Email              string `gorm:"not null;unique"`
+	Password           string `gorm:"size:25"`
+	VerificationCode   string `gorm:"size:6"`
 	VerificationExpiry time.Time
 }
