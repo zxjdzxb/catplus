@@ -1,16 +1,15 @@
 package main
 
 import (
+	"catplus-server/config"
 	"catplus-server/database"
 	"catplus-server/router"
-	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/spf13/viper"
 )
 
 func main() {
-	InitConfig()
+	config.InitConfig()
 
 	// 连接到 MySQL 数据库
 	db := database.InitDb()
@@ -25,16 +24,5 @@ func main() {
 	// 运行 Gin 应用程序
 	if err := r.Run(":8080"); err != nil {
 		panic("failed to start server")
-	}
-}
-
-func InitConfig() {
-	workDir, _ := os.Getwd()
-	viper.SetConfigName("application")
-	viper.SetConfigType("yml")
-	viper.AddConfigPath(workDir + "/config")
-	err := viper.ReadInConfig()
-	if err != nil {
-		panic("")
 	}
 }

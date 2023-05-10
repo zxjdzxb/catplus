@@ -1,0 +1,1 @@
+go build && ./catplus-server.exe
