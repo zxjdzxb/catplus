@@ -6,7 +6,6 @@ import (
 	"catplus-server/middleware"
 	"catplus-server/model"
 	"log"
-	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -26,7 +25,7 @@ func VerificationCode(c *gin.Context) {
 
 	var reqBody RequestBody
 	if err := c.ShouldBindJSON(&reqBody); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		common.Fail(c, gin.H{}, "invalid request body")
 		return
 	}
 
@@ -36,7 +35,8 @@ func VerificationCode(c *gin.Context) {
 	var user model.User
 	if err := db.Where("email = ?", reqBody.Email).First(&user).Error; err != nil {
 		if err := db.Create(&model.User{Email: reqBody.Email}).Error; err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
+			common.Fail(c, gin.H{}, "failed to create user")
+			return
 		}
 	}
 
@@ -53,23 +53,23 @@ func VerificationCode(c *gin.Context) {
 		VerificationCode:   codeStr,
 		VerificationExpiry: expiry,
 	}).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save code"})
+		common.Fail(c, gin.H{}, "failed to save code")
 		return
 	}
 
 	// 发送电子邮件
 	if !middleware.IsValidEmail(reqBody.Email) {
-		log.Println("无效的邮箱地址：", reqBody.Email)
-		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的邮箱地址"})
+
+		common.Fail(c, gin.H{}, "无效的邮箱地址")
 		return
 	}
 	if err := middleware.SendVerificationCodeToEmail(reqBody.Email, codeStr); err != nil {
 		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "发送邮件失败："})
+		common.Fail(c, gin.H{}, "发送邮件失败")
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "验证码已发送到邮箱，请注意查收"})
+	common.Success(c, gin.H{}, "验证码已发送到邮箱，请注意查收")
 
 }
 
@@ -80,47 +80,43 @@ func VerifyCode(c *gin.Context) {
 		Code  string `json:"code"`
 	}
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		common.Fail(c, gin.H{"error": err.Error()}, "invalid request body")
 		return
 	}
 	db := database.GetDB()
 	// 从数据库中查找用户
 	var user model.User
 	if err := db.Where("email = ?", request.Email).First(&user).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		common.Fail(c, gin.H{}, "user not found")
 		return
 	}
 
 	// 检查验证码是否过期
 	if user.VerificationExpiry.Before(time.Now()) {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "verification code has expired"})
+		common.Fail(c, gin.H{}, "verification code has expired")
 		return
 	}
 
 	// 检查验证码是否正确
 	if user.VerificationCode != request.Code {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid verification code"})
+		common.Fail(c, gin.H{}, "invalid verification code")
 		return
 	}
 
 	// 验证成功，可以执行其他操作
 	token, err := common.ReleaseToken(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"code":    500,
-			"message": "系统异常",
-		})
+		common.Fail(c, gin.H{
+			"code": 500,
+		}, "系统异常")
 		log.Printf("token generate error : %v", err)
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "验证成功", "token": token})
+	common.Success(c, gin.H{"token": token}, "验证成功")
 }
 
 func Info(c *gin.Context) {
 	user, _ := c.Get("user")
-	c.JSON(http.StatusOK, gin.H{
-		"code": 200,
-		"data": gin.H{"user": user},
-	})
+	common.Success(c, gin.H{"user": user}, "获取用户信息成功")
 }
