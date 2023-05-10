@@ -12,15 +12,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+/*
+Content-Type: application/json
+{
+	"email": 1660154581@qq.com
+}
+*/
 // VerificationCode 生成验证码
 func VerificationCode(c *gin.Context) {
-	email := c.PostForm("email")
+	type RequestBody struct {
+		Email string `json:"email"`
+	}
+
+	var reqBody RequestBody
+	if err := c.ShouldBindJSON(&reqBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
+		return
+	}
+
 	db := database.GetDB()
 
 	// 从数据库中查找用户,若没有则创建
 	var user model.User
-	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
-		if err := db.Create(&model.User{Email: email}).Error; err != nil {
+	if err := db.Where("email = ?", reqBody.Email).First(&user).Error; err != nil {
+		if err := db.Create(&model.User{Email: reqBody.Email}).Error; err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		}
 	}
@@ -43,12 +58,12 @@ func VerificationCode(c *gin.Context) {
 	}
 
 	// 发送电子邮件
-	if !middleware.IsValidEmail(email) {
-		log.Println("无效的邮箱地址：", email)
+	if !middleware.IsValidEmail(reqBody.Email) {
+		log.Println("无效的邮箱地址：", reqBody.Email)
 		c.JSON(http.StatusBadRequest, gin.H{"error": "无效的邮箱地址"})
 		return
 	}
-	if err := middleware.SendVerificationCodeToEmail(email, codeStr); err != nil {
+	if err := middleware.SendVerificationCodeToEmail(reqBody.Email, codeStr); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "发送邮件失败："})
 		return
@@ -60,12 +75,18 @@ func VerificationCode(c *gin.Context) {
 
 // VerifyCode 验证验证码
 func VerifyCode(c *gin.Context) {
-	email := c.PostForm("email")
-	code := c.PostForm("code")
+	var request struct {
+		Email string `json:"email"`
+		Code  string `json:"code"`
+	}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 	db := database.GetDB()
 	// 从数据库中查找用户
 	var user model.User
-	if err := db.Where("email = ?", email).First(&user).Error; err != nil {
+	if err := db.Where("email = ?", request.Email).First(&user).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return
 	}
@@ -77,7 +98,7 @@ func VerifyCode(c *gin.Context) {
 	}
 
 	// 检查验证码是否正确
-	if user.VerificationCode != code {
+	if user.VerificationCode != request.Code {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid verification code"})
 		return
 	}
