@@ -69,17 +69,51 @@ func IsValidEmail(email string) bool {
 func generateEmailMessage(fromName, from, to, subject, code string) string {
 	// 定义邮件模板
 	const templateText = `<html>
-<head>
-    <meta charset="utf-8">
-    <title>{{.Subject}}</title>
-</head>
-<body>
-    <p>Hello,</p>
-    <p>验证码: <strong>{{.Code}}</strong></p>
-    <p>有效期十分钟.</p>
-    <p><br>Regards,{{.FromName}}</p>
-</body>
-</html>`
+	<head>
+		<meta charset="utf-8">
+		<title>{{.Subject}}</title>
+		<style>
+			body {
+				font-family: Arial, sans-serif;
+				background-color: #f2f2f2;
+				padding: 20px;
+				margin: 0;
+			}
+
+			.container {
+				max-width: 600px;
+				margin: 0 auto;
+				background-color: #fff;
+				border: 1px solid #ddd;
+				padding: 20px;
+			}
+
+			h1 {
+				font-size: 24px;
+				color: #333;
+				margin-bottom: 20px;
+			}
+
+			p {
+				font-size: 16px;
+				line-height: 1.5;
+				color: #555;
+			}
+
+			strong {
+				font-weight: bold;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1>{{.Subject}}</h1>
+			<p>Hello!</p>
+			<p>验证码: <strong>{{.Code}}</strong></p>
+			<p>有效期十分钟.</p>
+		</div>
+	</body>
+	</html>`
 
 	// 解析邮件模板
 	tmpl, err := template.New("email").Parse(templateText)
