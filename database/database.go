@@ -26,6 +26,7 @@ func InitDb() *gorm.DB {
 	}
 	db.AutoMigrate(&model.User{})
 	db.AutoMigrate(&model.Tag{})
+
 	DB = db
 	return db
 }

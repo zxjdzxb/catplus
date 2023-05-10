@@ -2,7 +2,6 @@ package main
 
 import (
 	"catplus-server/database"
-	"catplus-server/model"
 	"catplus-server/router"
 	"os"
 
@@ -17,9 +16,6 @@ func main() {
 	db := database.InitDb()
 	sqlDB, _ := db.DB()
 	defer sqlDB.Close()
-
-	// 自动迁移 User 模型
-	db.AutoMigrate(&model.User{})
 
 	// 创建 Gin 引擎
 	r := gin.Default()
