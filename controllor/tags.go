@@ -20,7 +20,7 @@ Content-Type: application/json
 }
 */
 
-func CreateUserHandler(c *gin.Context) {
+func CreateTagHandler(c *gin.Context) {
 	var tag model.Tag
 	if err := c.ShouldBind(&tag); err != nil {
 		common.Fail(c, gin.H{"error": err.Error()}, "invalid request body")
