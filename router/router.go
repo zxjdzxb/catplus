@@ -17,6 +17,9 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	r.GET("/api/v1/tags/:id", controllor.GetTagHandler)
 	r.DELETE("/api/v1/tags/:id", controllor.DeleteTagHandler)
 	r.GET("/api/v1/tags", controllor.GetTagListHandler)
+	//items 增删改查
+	r.POST("/api/v1/items", controllor.CreateItemHandler)
+	r.GET("api/v1/items/summary", controllor.GetSummaryHandler)
 
 	return r
 }
