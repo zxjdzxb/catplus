@@ -11,7 +11,7 @@ import (
 
 func CreateItemHandler(c *gin.Context) {
 	var item model.Item
-
+	//获取mysql本地时间
 	if err := c.ShouldBindJSON(&item); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -21,6 +21,8 @@ func CreateItemHandler(c *gin.Context) {
 	db := database.GetDB()
 
 	// 创建账目
+	// 设置账目的 HappenAt 字段为 MySQL 服务器的本地时间
+	item.HappenAt = time.Now().Local()
 
 	if err := db.Create(&item).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
