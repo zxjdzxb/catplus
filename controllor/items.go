@@ -23,6 +23,7 @@ func CreateItemHandler(c *gin.Context) {
 	// 创建账目
 	// 设置账目的 HappenAt 字段为 MySQL 服务器的本地时间
 	item.HappenAt = time.Now().Local()
+	item.BeforeSave()
 
 	if err := db.Create(&item).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
@@ -31,6 +32,7 @@ func CreateItemHandler(c *gin.Context) {
 	repsone := gin.H{
 		"item": item,
 	}
+	item.AfterFind()
 
 	c.JSON(http.StatusOK, repsone)
 }
