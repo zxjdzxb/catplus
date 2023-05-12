@@ -19,7 +19,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	r.GET("/api/v1/tags", controllor.GetTagListHandler)
 	//items 增删改查
 	r.POST("/api/v1/items", controllor.CreateItemHandler)
-	r.GET("api/v1/items/summary", controllor.GetSummaryHandler)
+	r.GET("/api/v1/items/summary", controllor.GetItemsSummaryHandler)
 
 	return r
 }

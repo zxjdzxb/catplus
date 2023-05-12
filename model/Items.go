@@ -28,7 +28,7 @@ func (i *Item) BeforeSave() error {
 	return nil
 }
 
-func (i *Item) AfterFind() error {
+func (i *Item) AfterSave() error {
 	// 将字符串反序列化为 TagIDs 切片
 	if i.TagIDsStr != "" {
 		err := json.Unmarshal([]byte(i.TagIDsStr), &i.TagIDs)
@@ -40,6 +40,12 @@ func (i *Item) AfterFind() error {
 }
 
 type SummaryGroup struct {
-	Name  string `json:"name"`
-	Total int    `json:"total"`
+	Group Group `json:"group" gorm:"-"`
+	Total int   `json:"total"`
+}
+
+type Group struct {
+	HappenAt time.Time `json:"happen_at" gorm:"column:happen_at"`
+	Tag      string    `json:"tag" gorm:"column:tag"`
+	Amount   int       `json:"amount" gorm:"column:amount"`
 }
