@@ -20,6 +20,7 @@ func CollectRoute(r *gin.Engine) *gin.Engine {
 	//items 增删改查
 	r.POST("/api/v1/items", controllor.CreateItemHandler)
 	r.GET("/api/v1/items/summary", controllor.GetItemsSummaryHandler)
+	r.GET("/api/v1/items", controllor.GetItemsHandler)
 
 	return r
 }

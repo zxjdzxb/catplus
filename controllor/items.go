@@ -6,6 +6,7 @@ import (
 	"catplus-server/model"
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -108,6 +109,75 @@ func GetItemsSummaryHandler(c *gin.Context) {
 	response := gin.H{
 		"groups": groups,
 		"total":  total,
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func GetItemsHandler(c *gin.Context) {
+	page := c.Query("page")
+	happenedAfter := c.Query("happened_after")
+	happenedBefore := c.Query("happened_before")
+
+	// 构建查询条件
+	query := database.DB.Model(&model.Item{})
+
+	if happenedAfter != "" {
+		query = query.Where("happen_at >= ?", happenedAfter)
+	}
+
+	if happenedBefore != "" {
+		query = query.Where("happen_at <= ?", happenedBefore)
+	}
+
+	// 分页查询
+	var items []model.Item
+	var totalCount int64
+	PageSize := 10
+
+	err := query.Count(&totalCount).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to count items"})
+		return
+	}
+
+	if page != "" {
+		// 解析页码
+		pageNum, err := strconv.Atoi(page)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid page number"})
+			return
+		}
+
+		// 分页查询
+		offset := (pageNum - 1) * PageSize
+		query = query.Offset(offset).Limit(PageSize)
+	}
+
+	err = query.Select("id, amount").Find(&items).Error
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch items"})
+		return
+	}
+
+	// 构建响应数据
+	response := gin.H{
+		"resources": make([]gin.H, len(items)),
+		"pager": gin.H{
+			"page":     page,
+			"per_page": PageSize,
+			"count":    totalCount,
+		},
+	}
+
+	for i, item := range items {
+		response["resources"].([]gin.H)[i] = gin.H{
+			"id":     item.ID,
+			"amount": item.Amount,
+		}
 	}
 
 	c.JSON(http.StatusOK, response)
