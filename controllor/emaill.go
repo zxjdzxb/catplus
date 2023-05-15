@@ -8,6 +8,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -118,5 +119,13 @@ func VerifyCode(c *gin.Context) {
 
 func Info(c *gin.Context) {
 	user, _ := c.Get("user")
+	session := sessions.Default(c)
+	// Set a value in the session
+	session.Set("userID", user.(model.User).ID)
+	log.Println("userID:", user.(model.User).ID)
+
+	// Save the session
+	session.Save()
+
 	common.Success(c, gin.H{"user": user}, "获取用户信息成功")
 }

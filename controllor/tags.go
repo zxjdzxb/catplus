@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
@@ -49,7 +50,14 @@ func CreateTagHandler(c *gin.Context) {
 
 	db := database.GetDB()
 
-	tag.UserID = 1 // TODO: 从 session 中获取用户 ID
+	// TODO: 从 session 中获取用户 ID
+	session := sessions.Default(c)
+
+	// Retrieve the session value
+	userID := session.Get("userID")
+	log.Println("userID:", userID)
+
+	tag.UserID = userID.(uint)
 	// 检查 Name 和 UserID 是否已存在
 	var count int64
 	db.Model(&model.Tag{}).Where("name = ? AND user_id = ?", tag.Name, tag.UserID).Count(&count)
