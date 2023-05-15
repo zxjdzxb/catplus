@@ -8,19 +8,29 @@ import (
 )
 
 func CollectRoute(r *gin.Engine) *gin.Engine {
-	r.POST("/api/v1/validation_codes", controllor.VerificationCode)
-	r.POST("/api/v1/session", controllor.VerifyCode)
-	r.GET("/api/v1/me", middleware.AuthMiddleware(), controllor.Info)
-	//tags 增删改查
-	r.POST("/api/v1/tags", middleware.AuthMiddleware(), controllor.CreateTagHandler)
-	r.PATCH("/api/v1/tags/:id", controllor.UpdateTagHandler)
-	r.GET("/api/v1/tags/:id", controllor.GetTagHandler)
-	r.DELETE("/api/v1/tags/:id", controllor.DeleteTagHandler)
-	r.GET("/api/v1/tags", controllor.GetTagListHandler)
-	//items 增删改查
-	r.POST("/api/v1/items", controllor.CreateItemHandler)
-	r.GET("/api/v1/items/summary", controllor.GetItemsSummaryHandler)
-	r.GET("/api/v1/items", controllor.GetItemsHandler)
+	v1 := r.Group("/api/v1")
+	{
+		v1.POST("/validation_codes", controllor.VerificationCode)
+		v1.POST("/session", controllor.VerifyCode)
+		v1.GET("/me", middleware.AuthMiddleware(), controllor.Info)
+
+		tags := v1.Group("/tags") //, middleware.AuthMiddleware()
+		{
+			tags.POST("", controllor.CreateTagHandler)
+			tags.PATCH("/:id", controllor.UpdateTagHandler)
+			tags.GET("/:id", controllor.GetTagHandler)
+			tags.DELETE("/:id", controllor.DeleteTagHandler)
+			tags.GET("", controllor.GetTagListHandler)
+		}
+
+		items := v1.Group("/items")
+		{
+			items.POST("", controllor.CreateItemHandler)
+			items.GET("/summary", controllor.GetItemsSummaryHandler)
+			items.GET("", controllor.GetItemsHandler)
+			items.GET("/balance", controllor.GetBalanceHandler)
+		}
+	}
 
 	return r
 }
