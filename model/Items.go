@@ -12,6 +12,7 @@ type Item struct {
 	Amount    int       `json:"amount"`
 	Kind      string    `json:"kind"`
 	HappenAt  time.Time `json:"happen_at"`
+	Note      string    `json:"note"`
 	TagIDs    []int     `gorm:"-" json:"tag_ids"`
 	TagIDsStr string    `gorm:"column:tag_ids" json:"-"`
 }

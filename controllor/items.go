@@ -123,11 +123,11 @@ func GetItemsHandler(c *gin.Context) {
 	query := database.DB.Model(&model.Item{})
 
 	if happenedAfter != "" {
-		query = query.Where("happen_at >= ?", happenedAfter)
+		query = query.Where("happen_at >= ?", happenedBefore)
 	}
 
 	if happenedBefore != "" {
-		query = query.Where("happen_at <= ?", happenedBefore)
+		query = query.Where("happen_at <= ?", happenedAfter)
 	}
 
 	// 分页查询
@@ -156,7 +156,7 @@ func GetItemsHandler(c *gin.Context) {
 		query = query.Offset(offset).Limit(PageSize)
 	}
 
-	err = query.Select("id, amount").Find(&items).Error
+	err = query.Select("id, amount,kind,happen_at,note").Find(&items).Error
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch items"})
@@ -172,12 +172,58 @@ func GetItemsHandler(c *gin.Context) {
 			"count":    totalCount,
 		},
 	}
-
+	// var tags []model.Tag
 	for i, item := range items {
 		response["resources"].([]gin.H)[i] = gin.H{
-			"id":     item.ID,
-			"amount": item.Amount,
+			"id":        item.ID,
+			"amount":    item.Amount,
+			"kind":      item.Kind,
+			"note":      item.Note,
+			"happen_at": item.HappenAt,
+			// "tags":      tags,
 		}
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+func GetBalanceHandler(c *gin.Context) {
+	happenedAfter := c.Query("happened_after")
+	happenedBefore := c.Query("happened_before")
+
+	// 构建查询条件
+	query := database.DB.Model(&model.Item{})
+
+	if happenedAfter != "" {
+		query = query.Where("happen_at >= ?", happenedAfter)
+	}
+
+	if happenedBefore != "" {
+		query = query.Where("happen_at <= ?", happenedBefore)
+	}
+
+	// 计算净收入、支出和收入
+	var balance int64
+	var expenses int64
+	var income int64
+
+	err := query.Select("SUM(CASE WHEN kind = 'expenses' THEN amount ELSE 0 END) AS expenses").
+		Select("SUM(CASE WHEN kind = 'income' THEN amount ELSE 0 END) AS income").
+		Row().
+		Scan(&expenses, &income)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch balance"})
+		return
+	}
+
+	balance = income - expenses
+
+	// 构建响应数据
+	response := gin.H{
+		"balance":  balance,
+		"expenses": expenses,
+		"income":   income,
 	}
 
 	c.JSON(http.StatusOK, response)
