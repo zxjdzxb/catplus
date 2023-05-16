@@ -50,3 +50,8 @@ type Group struct {
 	Tag      string    `json:"tag" gorm:"column:tag"`
 	Amount   int       `json:"amount" gorm:"column:amount"`
 }
+
+type Balance struct {
+	Expenses int64 `json:"expenses"`
+	Income   int64 `json:"income"`
+}

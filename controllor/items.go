@@ -178,39 +178,40 @@ func GetBalanceHandler(c *gin.Context) {
 	happenedAfter := c.Query("happened_after")
 	happenedBefore := c.Query("happened_before")
 
-	// 构建查询条件
+	// Construct the query
 	query := database.DB.Model(&model.Item{})
 
 	if happenedAfter != "" {
-		query = query.Where("happen_at >= ?", happenedAfter)
+		query = query.Where("happen_at >= ?", happenedBefore)
 	}
 
 	if happenedBefore != "" {
-		query = query.Where("happen_at <= ?", happenedBefore)
+		query = query.Where("happen_at <= ?", happenedAfter)
 	}
 
-	// 计算净收入、支出和收入
-	var balance int64
+	// Calculate expenses
+
 	var expenses int64
 	var income int64
 
-	err := query.Select("SUM(CASE WHEN kind = 'expenses' THEN amount ELSE 0 END) AS expenses").
-		Select("SUM(CASE WHEN kind = 'income' THEN amount ELSE 0 END) AS income").
+	err := query.
+		Select("SUM(CASE WHEN kind ='expense' THEN amount ELSE 0 END) AS expenses,SUM(CASE WHEN kind ='income' THEN amount ELSE 0 END) AS income").
 		Row().
-		Scan(&expenses, &income)
+		Scan(&income, &expenses)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch balance"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	balance = income - expenses
+	// Calculate the balance
+	balance := income - expenses
 
-	// 构建响应数据
+	// Construct the response
 	response := gin.H{
-		"balance":  balance,
 		"expenses": expenses,
 		"income":   income,
+		"balance":  balance,
 	}
 
 	c.JSON(http.StatusOK, response)
