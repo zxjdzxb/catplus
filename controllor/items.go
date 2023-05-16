@@ -61,44 +61,83 @@ func GetItemsSummaryHandler(c *gin.Context) {
 
 	db := database.GetDB()
 
-	// 查询统计信息
-	var groups []model.Group
+	if groupBy == "tag_ids" {
+		var items []model.Item
+		var tags []model.Tag
+		query := db.Table("items").
+			Select(groupBy+" AS tag_ids, SUM(amount) AS amount").
+			Where("tag_ids IS NOT NULL").
+			Where("happen_at >= ?", happenedBefore).
+			Where("happen_at <= ?", happenedAfter).
+			Where("kind = ?", kind).
+			Group(groupBy)
+		if err := query.Find(&items).Error; err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve items."})
+			return
+		}
 
-	query := db.Table("items").
-		Select(groupBy+" AS happen_at, SUM(amount) AS amount").
-		Where("tag_ids IS NOT NULL").
-		Where("happen_at >= ?", happenedBefore).
-		Where("happen_at <= ?", happenedAfter).
-		Where("kind = ?", kind).
-		Group(groupBy)
+		tagIDsMap := make(map[int]bool)
+		for _, item := range items {
+			for _, tagID := range item.TagIDs {
+				tagIDsMap[tagID] = true
+			}
+		}
+		tagIDs := make([]int, 0, len(tagIDsMap))
+		for tagID := range tagIDsMap {
+			tagIDs = append(tagIDs, tagID)
+		}
 
-	err := query.Find(&groups).Error
-	if err != nil {
-		log.Println("Failed to fetch item summary:", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch item summary"})
-		return
+		if len(tagIDs) == 0 {
+			c.JSON(http.StatusOK, gin.H{"tag_ids": []int{}, "tag": []model.Tag{}})
+			return
+		}
+
+		if err := db.Where("id IN (?)", tagIDs).Find(&tags).Error; err != nil {
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve tags."})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"tag_ids": tagIDs, "tag": tags})
+	} else if groupBy == "happen_at" {
+		// 查询统计信息
+		var groups []model.Group
+		query := db.Table("items").
+			Select(groupBy+" AS happen_at, SUM(amount) AS amount").
+			Where("tag_ids IS NOT NULL").
+			Where("happen_at >= ?", happenedBefore).
+			Where("happen_at <= ?", happenedAfter).
+			Where("kind = ?", kind).
+			Group(groupBy)
+
+		err := query.Find(&groups).Error
+		if err != nil {
+			log.Println("Failed to fetch item summary:", err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch item summary"})
+			return
+		}
+
+		// 计算总金额
+		var total *int
+		err = db.Table("items").
+			Select("SUM(amount) AS total").
+			Where("tag_ids IS NOT NULL").
+			Where("happen_at >= ?", happenedBefore).
+			Where("happen_at <= ?", happenedAfter).
+			Where("kind = ?", kind).
+			Scan(&total).Error
+		if err != nil {
+			log.Println("Failed to calculate total:", err)
+			return
+		}
+
+		// 构建响应数据
+		response := gin.H{
+			"groups": groups,
+			"total":  total,
+		}
+
+		c.JSON(http.StatusOK, response)
 	}
-	// 计算总金额
-	var total int
-	err = db.Table("items").
-		Select("SUM(amount) AS total").
-		Where("tag_ids IS NOT NULL").
-		Where("happen_at >= ?", happenedBefore).
-		Where("happen_at <= ?", happenedAfter).
-		Where("kind = ?", kind).
-		Scan(&total).Error
-	if err != nil {
-		log.Println("Failed to calculate total:", err)
-		return
-	}
-
-	// 构建响应数据
-	response := gin.H{
-		"groups": groups,
-		"total":  total,
-	}
-
-	c.JSON(http.StatusOK, response)
 }
 
 func GetItemsHandler(c *gin.Context) {
