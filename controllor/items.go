@@ -27,7 +27,7 @@ func CreateItemHandler(c *gin.Context) {
 	item.HappenAt = time.Now().Local()
 	// 调用 BeforeSave() 方法，将 TagIDs 序列化为字符串
 	item.BeforeSave()
-	if item.Kind != "income" && item.Kind != "express" {
+	if item.Kind != "income" && item.Kind != "expense" {
 		common.Fail(c, gin.H{}, "invalid kind")
 		return
 	}
@@ -46,11 +46,6 @@ func CreateItemHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-type Group struct {
-	HappenAt time.Time `json:"happen_at"`
-	Amount   int       `json:"amount"`
-}
-
 func GetItemsSummaryHandler(c *gin.Context) {
 	// 解析查询参数
 	happenedAfter := c.Query("happened_after")
@@ -67,28 +62,20 @@ func GetItemsSummaryHandler(c *gin.Context) {
 	db := database.GetDB()
 
 	// 查询统计信息
-	var groups []Group
+	var groups []model.Group
 
 	query := db.Table("items").
-		Select(groupBy + " AS happen_at,SUM(amount) AS amount").
-		Where("tag_ids IS NOT NULL")
+		Select(groupBy+" AS happen_at, SUM(amount) AS amount").
+		Where("tag_ids IS NOT NULL").
+		Where("happen_at >= ?", happenedBefore).
+		Where("happen_at <= ?", happenedAfter).
+		Where("kind = ?", kind).
+		Group(groupBy)
 
-	if happenedAfter != "" {
-		query = query.Where("happen_at >= ?", happenedAfter)
-	}
-
-	if happenedBefore != "" {
-		query = query.Where("happen_at <= ?", happenedBefore)
-	}
-
-	if kind != "" {
-		query = query.Where("kind = ?", kind)
-	}
-
-	err := query.Group(groupBy).Scan(&groups).Error
-
+	err := query.Find(&groups).Error
 	if err != nil {
 		log.Println("Failed to fetch item summary:", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch item summary"})
 		return
 	}
 	// 计算总金额
@@ -96,8 +83,8 @@ func GetItemsSummaryHandler(c *gin.Context) {
 	err = db.Table("items").
 		Select("SUM(amount) AS total").
 		Where("tag_ids IS NOT NULL").
-		Where("happen_at >= ?", happenedAfter).
-		Where("happen_at <= ?", happenedBefore).
+		Where("happen_at >= ?", happenedBefore).
+		Where("happen_at <= ?", happenedAfter).
 		Where("kind = ?", kind).
 		Scan(&total).Error
 	if err != nil {

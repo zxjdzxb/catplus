@@ -16,18 +16,17 @@ import (
 Content-Type: application/json
 {
 	"name": "早餐",
-	"kind": "express",
-	"sign": "-", // 只有 kind 为 express 时才有 sign 字段
+	"kind": "expense",
+	"sign": "-", // 只有 kind 为 expense 时才有 sign 字段
 }
 */
 
 func CreateTagHandler(c *gin.Context) {
 	var tag model.Tag
-	if err := c.ShouldBind(&tag); err != nil {
+	if err := c.ShouldBindJSON(&tag); err != nil {
 		common.Fail(c, gin.H{"error": err.Error()}, "invalid request body")
 		return
 	}
-	log.Printf("Received request with parameters: \n%+v\t\n", tag)
 
 	// Validate name field
 	if len(tag.Name) < 2 || len(tag.Name) > 6 {
@@ -36,15 +35,17 @@ func CreateTagHandler(c *gin.Context) {
 	}
 
 	// Validate kind field
-	if tag.Kind != "income" && tag.Kind != "express" {
+	if tag.Kind != "income" && tag.Kind != "expense" {
 		common.Fail(c, gin.H{}, "invalid kind")
 		return
 	}
 	if tag.Kind == "income" && tag.Sign != "+" {
 		common.Fail(c, gin.H{}, "invalid sign for income tag")
 		return
-	} else if tag.Kind == "express" && tag.Sign != "-" {
-		common.Fail(c, gin.H{}, "invalid sign for express tag")
+	}
+
+	if tag.Kind == "expense" && tag.Sign != "-" {
+		common.Fail(c, gin.H{}, "invalid sign for expense tag")
 		return
 	}
 
@@ -62,7 +63,7 @@ func CreateTagHandler(c *gin.Context) {
 	var count int64
 	db.Model(&model.Tag{}).Where("name = ? AND user_id = ?", tag.Name, tag.UserID).Count(&count)
 	if count > 0 {
-		common.Fail(c, gin.H{"code": http.StatusConflict}, "invalid sign for express tag")
+		common.Fail(c, gin.H{"code": http.StatusConflict}, "已有该标签")
 		return
 	}
 
@@ -99,7 +100,7 @@ func UpdateTagHandler(c *gin.Context) {
 		Sign string `json:"sign"`
 	}
 
-	// sign 为-时，kind 必须为 express;为+为 income
+	// sign 为-时，kind 必须为 expense;为+为 income
 
 	if err := c.ShouldBindJSON(&requestBody); err != nil {
 		common.Fail(c, gin.H{"error": err.Error()}, "invalid request body")
@@ -173,7 +174,7 @@ func DeleteTagHandler(c *gin.Context) {
 }
 
 /*
-localhost:8080/api/v1/tags?page=1&kind=express
+localhost:8080/api/v1/tags?page=1&kind=expense
 */
 func GetTagListHandler(c *gin.Context) {
 	// 获取查询参数
