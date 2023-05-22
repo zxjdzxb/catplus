@@ -3,6 +3,7 @@ package controllor
 import (
 	"catplus-server/common"
 	"catplus-server/database"
+	"catplus-server/middleware"
 	"catplus-server/model"
 	"log"
 	"net/http"
@@ -62,42 +63,33 @@ func GetItemsSummaryHandler(c *gin.Context) {
 	db := database.GetDB()
 
 	if groupBy == "tag_ids" {
-		var items []model.Item
-		var tags []model.Tag
-		query := db.Table("items").
-			Select(groupBy+" AS tag_ids, SUM(amount) AS amount").
-			Where("tag_ids IS NOT NULL").
-			Where("happen_at >= ?", happenedBefore).
-			Where("happen_at <= ?", happenedAfter).
-			Where("kind = ?", kind).
-			Group(groupBy)
-		if err := query.Find(&items).Error; err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve items."})
+		var results []model.SummaryGroup2
+		var item model.Item
+		err := db.Model(&model.Item{}).
+			Select("tag_ids, SUM(amount) AS amount").
+			Joins("JOIN tags ON items.tag_ids = tags.id").
+			Where("happen_at >= ? AND happen_at <= ? AND kind = ?", happenedBefore, happenedAfter, kind).
+			Group("tag_id").
+			Find(&results).
+			Error
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch summary"})
 			return
 		}
-
-		tagIDsMap := make(map[int]bool)
-		for _, item := range items {
-			for _, tagID := range item.TagIDs {
-				tagIDsMap[tagID] = true
-			}
-		}
-		tagIDs := make([]int, 0, len(tagIDsMap))
-		for tagID := range tagIDsMap {
-			tagIDs = append(tagIDs, tagID)
-		}
-
-		if len(tagIDs) == 0 {
-			c.JSON(http.StatusOK, gin.H{"tag_ids": []int{}, "tag": []model.Tag{}})
+		tagIDs, err := middleware.ParseTagIDs(item.TagIDsStr)
+		if err != nil {
+			log.Println("Failed to parse tag IDs:", err)
 			return
 		}
+		item.TagIDs = tagIDs
 
-		if err := db.Where("id IN (?)", tagIDs).Find(&tags).Error; err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve tags."})
-			return
-		}
-
-		c.JSON(http.StatusOK, gin.H{"tag_ids": tagIDs, "tag": tags})
+		// 输出标签ID列表
+		log.Println("Tag IDs:", item.TagIDs)
+		c.JSON(http.StatusOK, gin.H{
+			"groups": results,
+			"total":  middleware.CalculateTotalAmount(results),
+		})
 	} else if groupBy == "happen_at" {
 		// 查询统计信息
 		var groups []model.Group
